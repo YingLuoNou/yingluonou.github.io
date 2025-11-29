@@ -5,20 +5,25 @@
 	cursor: pointer;
 	display: flex;
 	justify-content: flex-end;
-	left: 0;
-	margin-left: -100px;
+	/* left: 0; */
+	right: 0;
+	/* margin-left: -100px; */
+	margin-right: -100px;
 	padding: 5px;
 	position: fixed;
-	transition: margin-left 1s;
+	/* transition: margin-left 1s; */
+	transition: margin-right 1s; 
 	width: 60px;
 }
 
 #waifu-toggle.waifu-toggle-active {
-	margin-left: -50px;
+	/* margin-left: -50px; */
+	margin-right: -50px;
 }
 
 #waifu-toggle.waifu-toggle-active:hover {
-	margin-left: -30px;
+	/* margin-left: -30px; */
+	margin-right: -30px;
 }
 
 #waifu-toggle svg {
@@ -28,10 +33,12 @@
 
 #waifu {
 	bottom: -500px;
-	left: 0;
+	/*left: 0;*/
+	right: 0;
 	position: fixed;
 	transform: translateY(25px);
-	transition: transform .3s ease-in-out, bottom 3s ease-in-out;
+	/* transition: transform .3s ease-in-out, bottom 3s ease-in-out; */
+	transition: transform 0.3s ease-in-out, opacity 1.5s ease-in-out;
 	z-index: 1;
 }
 
@@ -94,7 +101,7 @@
 	gap: 5px;
 	opacity: 0;
 	position: absolute;
-	right: -10px;
+	left: -10px;
 	top: 70px;
 	transition: opacity 1s;
 }
@@ -266,4 +273,35 @@
 	0%, 100% {
 		transform: translate(0, 0) rotate(0);
 	}
+}
+
+
+/* 当屏幕宽度小于 768px 时应用以下样式 (通常作为移动设备的断点) */
+@media (max-width: 767px) {
+    
+    /* 1. 缩小 Live2D 模型的显示区域 */
+    #live2d {
+        width: 150px !important;  /* 缩小到 150px */
+        height: 150px !important; /* 缩小到 150px */
+    }
+
+    /* 2. 调整模型主容器 (#waifu) 的位置 */
+    /* 由于模型变小，你可能需要调整它在底部的偏移 */
+    #waifu {
+        /* 如果你使用了 right: 0;，则保持不变 */
+        right: 0; 
+        
+        /* 调整垂直偏移，让模型贴合底部 */
+        /* 假设模型高度从 300px 变为 150px，你可以调整 transform: translateY 的值 */
+        /* bottom: 0; */ 
+        /* transform: translateY(10px); */ 
+    }
+    
+    /* 3. 调整对话气泡 (#waifu-tips) 的大小和位置 */
+    #waifu-tips {
+        width: 180px !important; /* 缩小气泡宽度 */
+        font-size: 12px !important;
+        line-height: 20px !important;
+        margin: -10px 10px !important; /* 调整边距，防止溢出 */
+    }
 }
