@@ -302,6 +302,6 @@
         width: 180px !important; /* 缩小气泡宽度 */
         font-size: 12px !important;
         line-height: 20px !important;
-        margin: -10px 10px !important; /* 调整边距，防止溢出 */
+        margin: -50px -50px !important; /* 调整边距，防止溢出 */
     }
 }
