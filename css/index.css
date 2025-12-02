@@ -7202,7 +7202,7 @@ blockquote.pullquote.right {
   --tab-button-color: rgba(255,255,255,0.7);
   --tab-button-hover-bg: #383838;
   --tab-button-active-bg: #121212;
-  --card-bg: #121212;
+  --card-bg: rgba(18,18,18,0.5);
   --sidebar-bg: rgba(18,18,18,0.5);
   --sidebar-menu-bg: #1f1f1f;
   --btn-hover-color: #787878;
