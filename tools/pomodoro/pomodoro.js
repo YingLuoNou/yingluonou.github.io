@@ -50,6 +50,44 @@ function initPomodoro() {
     let breakTime = DEFAULT_BREAK_MIN * 60;
     let currentTime = workTime;
 
+    // === 屏幕常亮控制（Wake Lock） ===
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        if (!('wakeLock' in navigator)) return; // 浏览器不支持就跳过
+
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+
+            // 有些浏览器在切后台时会自动释放，需要监听再申请
+            wakeLock.addEventListener('release', () => {
+                console.log('Screen Wake Lock released');
+            });
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            console.log('Screen Wake Lock acquired');
+        } catch (err) {
+            console.warn('Screen Wake Lock 请求失败:', err);
+        }
+    }
+
+    function handleVisibilityChange() {
+        // 回到前台时，如果需要且已经没有 wakelock 了，再申请一次
+        if (document.visibilityState === 'visible' && wakeLock === null) {
+            requestWakeLock();
+        }
+    }
+
+    function releaseWakeLock() {
+        if (wakeLock) {
+            wakeLock.release().catch(() => {});
+            wakeLock = null;
+            console.log('Screen Wake Lock manually released');
+        }
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }
+
+
     // === 工具函数：获取“今天”的字符串（用于按日清零） ===
     function getTodayString() {
         const d = new Date();
@@ -224,6 +262,7 @@ function initPomodoro() {
         // 🚀 如果是专注时间，进入全屏沉浸模式
         if (isWorkSession) {
             enterFullscreen();
+            requestWakeLock();   // ⬅ 新增这一句
         }
 
         timerInterval = setInterval(() => {
@@ -240,6 +279,7 @@ function initPomodoro() {
         isRunning = false;
         clearInterval(timerInterval);
         startBtn.textContent = "继续";
+        releaseWakeLock();
     }
 
     function resetTimer() {
@@ -249,12 +289,14 @@ function initPomodoro() {
         startBtn.textContent = "开始专注";
         statusDisplay.textContent = "准备专注";
         exitFullscreen(); // 确保重置时退出全屏
+        releaseWakeLock();
         updateDisplay();
     }
 
     // === 一个阶段结束后的处理 ===
     function handleTimerComplete() {
         pauseTimer();
+        releaseWakeLock();
 
         if (isWorkSession) {
             // 🎉 专注完成 → 计数 +1、累计分钟数增加
