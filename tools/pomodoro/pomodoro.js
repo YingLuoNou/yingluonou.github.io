@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initPomodoro() {
     // === 默认配置（方便恢复默认设置） ===
     const DEFAULT_WORK_MIN = 25;
     const DEFAULT_BREAK_MIN = 5;
@@ -428,4 +428,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+};
+
+// 首次普通加载
+document.addEventListener('DOMContentLoaded', initPomodoro);
+
+// Hexo Butterfly / NexT 等常用主题：pjax 切换完成事件
+document.addEventListener('pjax:complete', initPomodoro);
+
+// 有的主题用的是 pjax:end，可以顺便加一行保险：
+document.addEventListener('pjax:end', initPomodoro);
+
