@@ -146,7 +146,7 @@ function initPomodoro() {
      * @param {number} duration - 自动关闭时间（毫秒），为 0 则不自动关闭
      */
     function showSnackbar(message, needAction = false, duration = 3000) {
-        stopBeepLoop(); // 每次弹窗前先停止声音（如果是循环提示，则后面会重新开启）
+        //stopBeepLoop(); // 每次弹窗前先停止声音（如果是循环提示，则后面会重新开启）
 
         Snackbar.show({
             text: message,
@@ -164,6 +164,7 @@ function initPomodoro() {
 
             // ④ 按下关闭动作
             onActionClick: function (element) {
+                element.style.opacity = 0;//关闭弹窗
                 stopBeepLoop();
             }
         });
@@ -183,7 +184,7 @@ function initPomodoro() {
             // 第 1 声
             let osc1 = audioCtx.createOscillator();
             let gain1 = audioCtx.createGain();
-            osc1.frequency.value = 880;
+            osc1.frequency.value = 1000;
             gain1.gain.value = 0.2;
             osc1.connect(gain1).connect(audioCtx.destination);
             osc1.start(now);
@@ -192,7 +193,7 @@ function initPomodoro() {
             // 第 2 声（0.3 秒后）
             let osc2 = audioCtx.createOscillator();
             let gain2 = audioCtx.createGain();
-            osc2.frequency.value = 880;
+            osc2.frequency.value = 1000;
             gain2.gain.value = 0.2;
             osc2.connect(gain2).connect(audioCtx.destination);
             osc2.start(now + 0.3);
@@ -200,7 +201,7 @@ function initPomodoro() {
         }
 
         doubleBeep();
-        window.beepInterval = setInterval(doubleBeep, 1500); // 1.5 秒一轮
+        window.beepInterval = setInterval(doubleBeep, 1000); // 1.5 秒一轮
     }
 
     function stopBeepLoop() {
@@ -210,7 +211,7 @@ function initPomodoro() {
     // === 提醒用户（统一使用 Snackbar + 声音循环） ===
     function notifyUser(message) {
         startBeepLoop();
-        showSnackbar(message);
+        showSnackbar(message,true,0);
     }
 
     // === UI 更新 ===
@@ -239,11 +240,11 @@ function initPomodoro() {
         }
     }
     function exitFullscreen() {
-    container.classList.remove("fullscreen-active");  // 永远移除样式
+        container.classList.remove("fullscreen-active");  // 永远移除样式
 
-    if (document.fullscreenElement) {
-        document.exitFullscreen();
-    }
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        }
     }
 
     // === Timer 控制 ===
@@ -259,6 +260,7 @@ function initPomodoro() {
         startBtn.textContent = isWorkSession ? "暂停" : "停止休息";
 
         if (isWorkSession) {
+            statusDisplay.textContent = "专注ing";
             enterFullscreen();
             requestWakeLock();
         }
@@ -294,6 +296,7 @@ function initPomodoro() {
 
         if (isWorkSession) {
             // 专注结束
+            exitFullscreen();
             pomoCount++;
             totalFocusMinutes += workTime / 60;
             updateStatsUI();
