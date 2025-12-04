@@ -1,0 +1,169 @@
+/* 定义 CSS 变量：默认是亮色模式 */
+.pomodoro-widget {
+    --pomo-bg: #ffffff;
+    --pomo-text: #333333;
+    --pomo-sec-text: #666666;
+    --pomo-border: #eeeeee;
+    --pomo-panel-bg: #f8f9fa;
+    --pomo-shadow: rgba(0,0,0,0.05);
+    
+    /* 基础样式应用变量 */
+    background: var(--pomo-bg);
+    color: var(--pomo-text);
+    border: 1px solid var(--pomo-border);
+    box-shadow: 0 2px 10px var(--pomo-shadow);
+    
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    max-width: 800px;
+    min-height: 300px;
+    margin: 20px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: all 0.3s ease;
+}
+
+/* 🌑 深色模式适配 (核心修改) */
+html[data-theme="dark"] .pomodoro-widget {
+    --pomo-bg: #282c34;        /* 深灰背景 */
+    --pomo-text: #e0e0e0;      /* 浅白文字 */
+    --pomo-sec-text: #f4f4f4;  /* 次要文字变浅 */
+    --pomo-border: #444444;    /* 边框变深 */
+    --pomo-panel-bg: #333333;  /* 设置面板变深 */
+    --pomo-shadow: rgba(0,0,0,0.2);
+}
+
+.pomo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.widget-title {
+    margin: 0 !important;
+    font-size: 1.1rem;
+    color: var(--pomo-text) !important; /* 跟随变量 */
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.6;
+    color: var(--pomo-text); /* 按钮颜色适配 */
+}
+
+#pomo-timer {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--pomo-text); /* 时间颜色适配 */
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    margin: 10px 0;
+    line-height: 1.2;
+}
+
+#pomo-status-text {
+    font-size: 0.9rem;
+    color: var(--pomo-sec-text); /* 状态文字适配 */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#pomo-save-settings {
+    color: var(--pomo-text)
+}
+
+#pomo-counter {
+    margin-top: 5px;
+    color: var(--pomo-sec-text);
+}
+
+.pomo-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.pomo-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.1s;
+}
+.pomo-btn:active { transform: scale(0.95); }
+
+.primary { background: #e74c3c; color: white; }
+
+.secondary { 
+    background: var(--pomo-panel-bg); /* 重置按钮背景跟随变量 */
+    color: var(--pomo-text); 
+    border: 1px solid var(--pomo-border); /* 增加边框以在深色模式更清晰 */
+}
+
+/* 设置面板 */
+.settings-panel {
+    background: var(--pomo-panel-bg); /* 设置面板背景适配 */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    border: 1px solid var(--pomo-border);
+}
+.settings-panel.hidden { display: none; }
+.setting-item { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.setting-item input { 
+    width: 50px; 
+    padding: 3px; 
+    background: var(--pomo-bg); 
+    color: var(--pomo-text);
+    border: 1px solid var(--pomo-border);
+}
+
+/* 🔥 全屏沉浸模式 (保持全黑，不受主题影响) */
+.pomodoro-widget.fullscreen-active {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background-color: #000 !important; /* 强制纯黑 */
+    color: #fff !important;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: none;
+    margin: 0;
+}
+
+.fullscreen-active .widget-title, 
+.fullscreen-active .pomo-header,
+.fullscreen-active .settings-panel { display: none; }
+
+.fullscreen-active #pomo-timer {
+    color: #fff !important;
+    font-size: 8rem;
+    margin: 20px 0;
+}
+
+.fullscreen-active #pomo-status-text {
+    color: #888 !important;
+    font-size: 1.5rem;
+}
+.fullscreen-active .icon-btn { color: #fff; }
+
+.fullscreen-active .pomo-controls .primary {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+}
+.fullscreen-active .pomo-controls .secondary { display: none; }
