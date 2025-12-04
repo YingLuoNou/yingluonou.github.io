@@ -1,5 +1,10 @@
 function initPomodoro() {
-    // === 默认配置（方便恢复默认设置） ===
+    // 防止 PJAX 重复初始化
+    const container = document.getElementById('pomodoro-app');
+    if (!container || container.dataset.pomoInited === '1') return;
+    container.dataset.pomoInited = '1';
+
+    // === 默认配置 ===
     const DEFAULT_WORK_MIN = 25;
     const DEFAULT_BREAK_MIN = 5;
     const DEFAULT_LONG_BREAK_MIN = 15;
@@ -7,7 +12,6 @@ function initPomodoro() {
     const DEFAULT_ENABLE_STORAGE = true;
 
     // === DOM 元素 ===
-    const container = document.getElementById('pomodoro-app');
     const timerDisplay = document.getElementById('pomo-timer');
     const statusDisplay = document.getElementById('pomo-status-text');
     const startBtn = document.getElementById('pomo-start-btn');
@@ -18,9 +22,8 @@ function initPomodoro() {
     const workInput = document.getElementById('work-duration');
     const breakInput = document.getElementById('break-duration');
     const longBreakInput = document.getElementById('longbreak-duration');
-
-    const counterEl = document.getElementById('pomo-counter'); // 今日专注次数
-    const totalEl = document.getElementById('pomo-total');     // 今日累计专注时间
+    const counterEl = document.getElementById('pomo-counter');
+    const totalEl = document.getElementById('pomo-total');
 
     const enableSoundInput = document.getElementById('enable-sound');
     const enableStorageInput = document.getElementById('enable-storage');
@@ -28,151 +31,101 @@ function initPomodoro() {
     const resetSettingsBtn = document.getElementById('reset-settings');
     const fullscreenBtn = document.getElementById('pomo-fullscreen-btn');
 
-    // === 基本配置 ===
+    // === 本地存储 ===
     const STORAGE_KEY = 'pomodoro_stats_v1';
-    let longBreakTime = DEFAULT_LONG_BREAK_MIN * 60;  // 默认 15 分钟长休息
-    let pomoCount = 0;                   // 今日已完成专注次数
-    let totalFocusMinutes = 0;           // 今日累计专注时长（分钟）
-    const cycleBeforeLongBreak = 4;      // 每 4 次专注触发一次长休息
+    let pomoCount = 0;
+    let totalFocusMinutes = 0;
 
-    // 开关：声音 + 本地保存
     let enableSound = DEFAULT_ENABLE_SOUND;
     let enableStorage = DEFAULT_ENABLE_STORAGE;
 
-    // 简单的提示音 (Web Audio)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    // === 计时状态 ===
-    let timerInterval = null;
-    let isRunning = false;
-    let isWorkSession = true; // true = 专注, false = 休息
+    let longBreakTime = DEFAULT_LONG_BREAK_MIN * 60;
     let workTime = DEFAULT_WORK_MIN * 60;
     let breakTime = DEFAULT_BREAK_MIN * 60;
+
+    // === 状态 ===
+    let timerInterval = null;
+    let isRunning = false;
+    let isWorkSession = true;
     let currentTime = workTime;
 
-    // === 屏幕常亮控制（Wake Lock） ===
+    // === Web Audio ===
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    window.beepInterval = null;
+
+    // === Wake Lock ===
     let wakeLock = null;
 
-    async function requestWakeLock() {
-        if (!('wakeLock' in navigator)) return; // 浏览器不支持就跳过
-
-        try {
-            wakeLock = await navigator.wakeLock.request('screen');
-
-            // 有些浏览器在切后台时会自动释放，需要监听再申请
-            wakeLock.addEventListener('release', () => {
-                console.log('Screen Wake Lock released');
-            });
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            console.log('Screen Wake Lock acquired');
-        } catch (err) {
-            console.warn('Screen Wake Lock 请求失败:', err);
+    document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+            // 全屏被退出（无论自动还是手动）
+            container.classList.remove("fullscreen-active");
+            releaseWakeLock();
         }
-    }
+    });
 
+
+    async function requestWakeLock() {
+        if (!("wakeLock" in navigator)) return;
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener("release", () => {});
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+        } catch {}
+    }
     function handleVisibilityChange() {
-        // 回到前台时，如果需要且已经没有 wakelock 了，再申请一次
-        if (document.visibilityState === 'visible' && wakeLock === null) {
+        if (document.visibilityState === "visible" && wakeLock === null) {
             requestWakeLock();
         }
     }
-
     function releaseWakeLock() {
         if (wakeLock) {
             wakeLock.release().catch(() => {});
             wakeLock = null;
-            console.log('Screen Wake Lock manually released');
         }
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
     }
 
-
-    // === 工具函数：获取“今天”的字符串（用于按日清零） ===
+    // === LocalStorage ===
     function getTodayString() {
         const d = new Date();
-        const y = d.getFullYear();
-        const m = (d.getMonth() + 1).toString().padStart(2, '0');
-        const day = d.getDate().toString().padStart(2, '0');
-        return `${y}-${m}-${day}`;
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
-    // === 从 localStorage 读取数据 ===
     function loadStatsFromStorage() {
         const today = getTodayString();
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
 
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) {
-                // 没有数据 -> 初始化输入框和开关为默认值
-                workTime = DEFAULT_WORK_MIN * 60;
-                breakTime = DEFAULT_BREAK_MIN * 60;
-                longBreakTime = DEFAULT_LONG_BREAK_MIN * 60;
-                enableSound = DEFAULT_ENABLE_SOUND;
-                enableStorage = DEFAULT_ENABLE_STORAGE;
-
-                workInput.value = DEFAULT_WORK_MIN;
-                breakInput.value = DEFAULT_BREAK_MIN;
-                if (longBreakInput) longBreakInput.value = DEFAULT_LONG_BREAK_MIN;
-                if (enableSoundInput) enableSoundInput.checked = enableSound;
-                if (enableStorageInput) enableStorageInput.checked = enableStorage;
-
-                currentTime = workTime;
-                return;
-            }
-
             const saved = JSON.parse(raw);
 
-            // 读取开关配置
-            if (typeof saved.enableSound === 'boolean') enableSound = saved.enableSound;
-            if (typeof saved.enableStorage === 'boolean') enableStorage = saved.enableStorage;
+            // 读取设置
+            enableSound = saved.enableSound ?? DEFAULT_ENABLE_SOUND;
+            enableStorage = saved.enableStorage ?? DEFAULT_ENABLE_STORAGE;
 
-            // 无论是不是今天，都可以继承上次的时长设置
-            if (typeof saved.workTime === 'number') workTime = saved.workTime;
-            if (typeof saved.breakTime === 'number') breakTime = saved.breakTime;
-            if (typeof saved.longBreakTime === 'number') longBreakTime = saved.longBreakTime;
+            if (saved.workTime) workTime = saved.workTime;
+            if (saved.breakTime) breakTime = saved.breakTime;
+            if (saved.longBreakTime) longBreakTime = saved.longBreakTime;
 
-            // 更新输入框 & 开关 UI
-            workInput.value = Math.round(workTime / 60);
-            breakInput.value = Math.round(breakTime / 60);
-            if (longBreakInput) longBreakInput.value = Math.round(longBreakTime / 60);
-            if (enableSoundInput) enableSoundInput.checked = enableSound;
-            if (enableStorageInput) enableStorageInput.checked = enableStorage;
-
-            // 如果存储的是“今天”的数据 → 继承今日统计
+            // 读取今日统计
             if (saved.date === today) {
                 pomoCount = saved.pomoCount || 0;
                 totalFocusMinutes = saved.totalFocusMinutes || 0;
-            } else {
-                // 日期不匹配 → 新的一天，统计清零
-                pomoCount = 0;
-                totalFocusMinutes = 0;
             }
 
-            currentTime = workTime;
-        } catch (e) {
-            console.error('加载番茄钟本地数据失败:', e);
-            // 出问题就用默认值
-            workTime = DEFAULT_WORK_MIN * 60;
-            breakTime = DEFAULT_BREAK_MIN * 60;
-            longBreakTime = DEFAULT_LONG_BREAK_MIN * 60;
-            enableSound = DEFAULT_ENABLE_SOUND;
-            enableStorage = DEFAULT_ENABLE_STORAGE;
+            // 更新 UI
+            workInput.value = Math.round(workTime / 60);
+            breakInput.value = Math.round(breakTime / 60);
+            longBreakInput.value = Math.round(longBreakTime / 60);
+            enableSoundInput.checked = enableSound;
+            enableStorageInput.checked = enableStorage;
 
-            workInput.value = DEFAULT_WORK_MIN;
-            breakInput.value = DEFAULT_BREAK_MIN;
-            if (longBreakInput) longBreakInput.value = DEFAULT_LONG_BREAK_MIN;
-            if (enableSoundInput) enableSoundInput.checked = enableSound;
-            if (enableStorageInput) enableStorageInput.checked = enableStorage;
-
-            currentTime = workTime;
-        }
+        } catch {}
     }
 
-    // === 将当前统计与设置写入 localStorage ===
     function saveStatsToStorage() {
-        if (!enableStorage) return; // 用户关闭本地保存则直接跳过
-
+        if (!enableStorage) return;
         const data = {
             date: getTodayString(),
             pomoCount,
@@ -183,69 +136,120 @@ function initPomodoro() {
             enableSound,
             enableStorage
         };
-
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        } catch (e) {
-            console.error('保存番茄钟本地数据失败:', e);
-        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
-    // === 更新统计显示（计数 + 总分钟数） ===
-    function updateStatsUI() {
-        if (counterEl) {
-            counterEl.textContent = `你已经进行了${pomoCount}个番茄专注了！🍅🍅`;
-        }
-        if (totalEl) {
-            const minutes = Math.round(totalFocusMinutes);
-            totalEl.textContent = `今日累计专注：${minutes} 分钟`;
-        }
+    /**
+     * 统一弹窗提醒
+     * @param {string} message - 显示文本
+     * @param {boolean} needAction - 是否需要“关闭”按钮（例如番茄完成提示）
+     * @param {number} duration - 自动关闭时间（毫秒），为 0 则不自动关闭
+     */
+    function showSnackbar(message, needAction = false, duration = 3000) {
+        stopBeepLoop(); // 每次弹窗前先停止声音（如果是循环提示，则后面会重新开启）
+
+        Snackbar.show({
+            text: message,
+
+            // ① 显示位置：居中顶部
+            pos: "top-center",
+
+            // ② 自动关闭时间
+            duration: duration, // 毫秒；若要永不关闭则传 0
+
+            // ③ 是否显示关闭按钮
+            showAction: needAction,
+
+            actionText: "关闭",
+
+            // ④ 按下关闭动作
+            onActionClick: function (element) {
+                stopBeepLoop();
+            }
+        });
     }
 
-    // === 初始化：读取本地数据并刷新 UI ===
-    loadStatsFromStorage();
-    updateStatsUI();
-    updateDisplay();
 
-    // === 声音提示 ===
-    function playSound() {
+    // === 新版声音循环：哔哔 → 停 1 秒 → 哔哔 → 停 1 秒 → 循环 ===
+    function startBeepLoop() {
         if (!enableSound) return;
+        if (audioCtx.state === "suspended") audioCtx.resume();
 
-        // 确保 AudioContext 已被唤醒（需要用户交互触发）
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume().catch(() => {});
+        if (window.beepInterval) clearInterval(window.beepInterval);
+
+        function doubleBeep() {
+            const now = audioCtx.currentTime;
+
+            // 第 1 声
+            let osc1 = audioCtx.createOscillator();
+            let gain1 = audioCtx.createGain();
+            osc1.frequency.value = 880;
+            gain1.gain.value = 0.2;
+            osc1.connect(gain1).connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.15);
+
+            // 第 2 声（0.3 秒后）
+            let osc2 = audioCtx.createOscillator();
+            let gain2 = audioCtx.createGain();
+            osc2.frequency.value = 880;
+            gain2.gain.value = 0.2;
+            osc2.connect(gain2).connect(audioCtx.destination);
+            osc2.start(now + 0.3);
+            osc2.stop(now + 0.45);
         }
 
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // 880Hz
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.5); // 响 0.5 秒
+        doubleBeep();
+        window.beepInterval = setInterval(doubleBeep, 1500); // 1.5 秒一轮
     }
 
-    // 一个统一的提示：先声音，后 alert
+    function stopBeepLoop() {
+        if (window.beepInterval) clearInterval(window.beepInterval);
+    }
+
+    // === 提醒用户（统一使用 Snackbar + 声音循环） ===
     function notifyUser(message) {
-        // 先播声音
-        playSound();
-
-        // 给声音留一点时间，再弹窗（避免声音在 alert 阻塞期间被“静音”）
-        setTimeout(() => {
-            alert(message);
-        }, enableSound ? 600 : 0);
+        startBeepLoop();
+        showSnackbar(message);
     }
 
-    // === 计时控制 ===
-    function toggleTimer() {
+    // === UI 更新 ===
+    function updateStatsUI() {
+        counterEl.textContent = `你已经进行了 ${pomoCount} 个番茄专注！🍅`;
+        totalEl.textContent = `今日累计专注：${Math.round(totalFocusMinutes)} 分钟`;
+    }
+
+    function updateDisplay() {
+        const m = String(Math.floor(currentTime / 60)).padStart(2, "0");
+        const s = String(currentTime % 60).padStart(2, "0");
+        timerDisplay.textContent = `${m}:${s}`;
+
         if (isRunning) {
-            pauseTimer();
+            document.title = `${isWorkSession ? "专注中" : "休息中"}(${m}:${s}) 番茄钟`;
         } else {
-            statusDisplay.textContent = "专注ing";
-            startTimer();
+            document.title = "YangLuoNou's 番茄钟";
         }
+    }
+
+    // === 全屏控制 ===
+    function enterFullscreen() {
+        container.classList.add("fullscreen-active");
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+    }
+    function exitFullscreen() {
+    container.classList.remove("fullscreen-active");  // 永远移除样式
+
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    }
+    }
+
+    // === Timer 控制 ===
+    function toggleTimer() {
+        if (isRunning) pauseTimer();
+        else startTimer();
     }
 
     function startTimer() {
@@ -254,24 +258,15 @@ function initPomodoro() {
         isRunning = true;
         startBtn.textContent = isWorkSession ? "暂停" : "停止休息";
 
-        // 第一次点击时唤醒音频上下文
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume().catch(() => {});
-        }
-
-        // 🚀 如果是专注时间，进入全屏沉浸模式
         if (isWorkSession) {
             enterFullscreen();
-            requestWakeLock();   // ⬅ 新增这一句
+            requestWakeLock();
         }
 
         timerInterval = setInterval(() => {
             currentTime--;
             updateDisplay();
-
-            if (currentTime <= 0) {
-                handleTimerComplete();
-            }
+            if (currentTime <= 0) handleTimerComplete();
         }, 1000);
     }
 
@@ -288,196 +283,120 @@ function initPomodoro() {
         currentTime = workTime;
         startBtn.textContent = "开始专注";
         statusDisplay.textContent = "准备专注";
-        exitFullscreen(); // 确保重置时退出全屏
+        exitFullscreen();
         releaseWakeLock();
         updateDisplay();
     }
 
-    // === 一个阶段结束后的处理 ===
     function handleTimerComplete() {
         pauseTimer();
         releaseWakeLock();
 
         if (isWorkSession) {
-            // 🎉 专注完成 → 计数 +1、累计分钟数增加
+            // 专注结束
             pomoCount++;
-            const focusMinutes = workTime / 60; // 当前专注阶段时长（分钟）
-            totalFocusMinutes += focusMinutes;
-
-            // 更新统计并尝试保存
+            totalFocusMinutes += workTime / 60;
             updateStatsUI();
             saveStatsToStorage();
 
-            // === 判断进入短休息还是长休息 ===
-            if (pomoCount % cycleBeforeLongBreak === 0) {
-                // ⭐ 第4次进入长休息
+            if (pomoCount % 4 === 0) {
                 isWorkSession = false;
                 currentTime = longBreakTime;
                 statusDisplay.textContent = "🎉 长休息时间！";
-                startBtn.textContent = "开始长休息";
-                exitFullscreen();
                 notifyUser("恭喜完成四次专注！进入长休息～");
             } else {
-                // ☕ 普通短休息
                 isWorkSession = false;
                 currentTime = breakTime;
                 statusDisplay.textContent = "☕ 休息一下";
-                startBtn.textContent = "开始休息";
-                exitFullscreen();
-                notifyUser("专注时间结束！请休息一下。");
+                notifyUser("专注结束！请休息一下。");
             }
 
         } else {
-            // === 休息结束 → 开始新的专注 ===
+            // 休息结束
             isWorkSession = true;
             currentTime = workTime;
             statusDisplay.textContent = "准备专注";
-            startBtn.textContent = "开始专注";
             notifyUser("休息结束，准备开始新的专注！");
         }
 
         updateDisplay();
     }
 
-    // === 显示更新 ===
-    function updateDisplay() {
-        const minutes = Math.floor(currentTime / 60);
-        const seconds = currentTime % 60;
-        timerDisplay.textContent = `${pad(minutes)}:${pad(seconds)}`;
-
-        // 动态更新网页标题
-        if (isRunning) {
-            if (isWorkSession) {
-                document.title = `专注中(${pad(minutes)}:${pad(seconds)}) 番茄钟`;
-            } else {
-                document.title = `休息中(${pad(minutes)}:${pad(seconds)}) 番茄钟`;
-            }
-        } else {
-            document.title = "YangLuoNou's番茄钟";
-        }
-    }
-
-    function pad(num) {
-        return num.toString().padStart(2, '0');
-    }
-
-    // === 全屏控制 ===
-    function enterFullscreen() {
-        container.classList.add('fullscreen-active');
-
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        }
-    }
-
-    function exitFullscreen() {
-        container.classList.remove('fullscreen-active');
-
-        if (document.fullscreenElement) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
-    }
-
-    // 监听用户按 ESC 键手动退出全屏的情况
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && isRunning && isWorkSession) {
-            container.classList.remove('fullscreen-active');
-        }
-    });
-
     // === 事件绑定 ===
-    startBtn.addEventListener('click', toggleTimer);
-    resetBtn.addEventListener('click', resetTimer);
+    startBtn.addEventListener("click", toggleTimer);
+    resetBtn.addEventListener("click", resetTimer);
 
-    settingsBtn.addEventListener('click', () => {
-        settingsPanel.classList.toggle('hidden');
+    settingsBtn.addEventListener("click", () => {
+        settingsPanel.classList.toggle("hidden");
     });
 
-    // 保存设置：时长 + 开关 + 存储
-    saveSettingsBtn.addEventListener('click', () => {
-        workTime = parseInt(workInput.value || String(DEFAULT_WORK_MIN), 10) * 60;
-        breakTime = parseInt(breakInput.value || String(DEFAULT_BREAK_MIN), 10) * 60;
-        longBreakTime = parseInt(longBreakInput.value || String(DEFAULT_LONG_BREAK_MIN), 10) * 60;
+    saveSettingsBtn.addEventListener("click", () => {
+        workTime = parseInt(workInput.value, 10) * 60;
+        breakTime = parseInt(breakInput.value, 10) * 60;
+        longBreakTime = parseInt(longBreakInput.value, 10) * 60;
 
-        if (enableSoundInput) enableSound = !!enableSoundInput.checked;
-        if (enableStorageInput) enableStorage = !!enableStorageInput.checked;
+        enableSound = enableSoundInput.checked;
+        enableStorage = enableStorageInput.checked;
 
         if (!isRunning) {
             currentTime = isWorkSession ? workTime : breakTime;
             updateDisplay();
         }
 
-        saveStatsToStorage(); // 如果关闭了本地保存，此函数内部会直接 return
-
-        settingsPanel.classList.add('hidden');
-        alert("设置已保存");
+        saveStatsToStorage();
+        showSnackbar("设置已保存");
     });
 
-    // 清除本地统计数据
     if (clearStorageBtn) {
-        clearStorageBtn.addEventListener('click', () => {
-            try {
-                localStorage.removeItem(STORAGE_KEY);
-            } catch (e) {
-                console.error('清除本地番茄钟数据失败:', e);
-            }
-            // 清空当前统计
+        clearStorageBtn.addEventListener("click", () => {
+            localStorage.removeItem(STORAGE_KEY);
             pomoCount = 0;
             totalFocusMinutes = 0;
             updateStatsUI();
-            alert("本地统计数据已清除（不影响当前设置）");
+            showSnackbar("本地统计数据已清除");
         });
     }
 
-    // 恢复默认设置（仅恢复：时长 + 声音开关 + 本地保存开关，不清空统计）
     if (resetSettingsBtn) {
-        resetSettingsBtn.addEventListener('click', () => {
+        resetSettingsBtn.addEventListener("click", () => {
             workTime = DEFAULT_WORK_MIN * 60;
             breakTime = DEFAULT_BREAK_MIN * 60;
             longBreakTime = DEFAULT_LONG_BREAK_MIN * 60;
+
             enableSound = DEFAULT_ENABLE_SOUND;
             enableStorage = DEFAULT_ENABLE_STORAGE;
 
             workInput.value = DEFAULT_WORK_MIN;
             breakInput.value = DEFAULT_BREAK_MIN;
-            if (longBreakInput) longBreakInput.value = DEFAULT_LONG_BREAK_MIN;
-            if (enableSoundInput) enableSoundInput.checked = enableSound;
-            if (enableStorageInput) enableStorageInput.checked = enableStorage;
+            longBreakInput.value = DEFAULT_LONG_BREAK_MIN;
+
+            enableSoundInput.checked = enableSound;
+            enableStorageInput.checked = enableStorage;
 
             if (!isRunning) {
-                currentTime = isWorkSession ? workTime : breakTime;
+                currentTime = workTime;
                 updateDisplay();
             }
 
             saveStatsToStorage();
-            alert("已恢复默认设置");
+            showSnackbar("已恢复默认设置");
         });
     }
 
-    // 全屏按钮：在“专注运行中”时点击可以重新进入全屏
     if (fullscreenBtn) {
-        fullscreenBtn.addEventListener('click', () => {
-            if (isWorkSession && isRunning) {
-                enterFullscreen();
-            } else {
-                alert("只有在专注计时进行中才能进入全屏模式～");
-            }
+        fullscreenBtn.addEventListener("click", () => {
+            if (isWorkSession && isRunning) enterFullscreen();
+            else showSnackbar("只有在专注进行中才能进入全屏模式～");
         });
     }
-};
 
-// 首次普通加载
-document.addEventListener('DOMContentLoaded', initPomodoro);
+    // === 初始化 ===
+    loadStatsFromStorage();
+    updateStatsUI();
+    updateDisplay();
+}
 
-// Hexo Butterfly / NexT 等常用主题：pjax 切换完成事件
-document.addEventListener('pjax:complete', initPomodoro);
-
-// 有的主题用的是 pjax:end，可以顺便加一行保险：
-document.addEventListener('pjax:end', initPomodoro);
-
+// 初始化（PJAX + 首次加载）
+document.addEventListener("DOMContentLoaded", initPomodoro);
+document.addEventListener("pjax:complete", initPomodoro);
+document.addEventListener("pjax:end", initPomodoro);
