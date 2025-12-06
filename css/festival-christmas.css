@@ -1,0 +1,328 @@
+:root{
+    --card-bg: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme='dark']{
+    --card-bg: rgba(0, 0, 0, 0.5);
+}
+
+.card-announcement .item-headline i.fa-shake {
+  animation: none !important;
+}
+
+.card-announcement .item-headline i {
+  color: inherit !important;
+}
+
+.avatar-img img:hover {
+  transform: none !important;
+}
+
+
+/* 1. 定义左右摇摆动画 */
+@keyframes shake-once {
+    /* 动画的起始和结束状态：位置不变 */
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    /* 第一次摇摆（向左） */
+    10% {
+        transform: translateX(-3px) rotate(-3deg);
+    }
+    /* 第一次摇摆（向右） */
+    20% {
+        transform: translateX(3px) rotate(3deg);
+    }
+    /* 第二次摇摆（向左） */
+    30% {
+        transform: translateX(-2px) rotate(-2deg);
+    }
+    /* 第二次摇摆（向右） */
+    40% {
+        transform: translateX(2px) rotate(2deg);
+    }
+    /* 第三次摇摆（回到中心） */
+    50% {
+        transform: translateX(0) rotate(0deg);
+    }
+    /* 保持静止直到动画结束 */
+    60%, 90% {
+        transform: translateX(0) rotate(0deg);
+    }
+}
+
+@keyframes bounce-thrice {
+    /* 动画的起始状态：垂直位置不变 */
+    0%, 100% {
+        transform: translateY(0);
+    }
+    /* 第一次弹跳：快速下沉 */
+    10% {
+        transform: translateY(5px);
+    }
+    /* 第一次弹跳：快速回弹并略微上浮 */
+    20% {
+        transform: translateY(-5px);
+    }
+    
+    /* 第二次弹跳：快速下沉 */
+    30% {
+        transform: translateY(3px);
+    }
+    /* 第二次弹跳：快速回弹并略微上浮 */
+    40% {
+        transform: translateY(-3px);
+    }
+    
+    /* 第三次弹跳：快速下沉 */
+    50% {
+        transform: translateY(1px);
+    }
+    /* 第三次弹跳：回到原始位置 */
+    60% {
+        transform: translateY(0);
+    }
+    
+    /* 动画的其余时间保持静止，直到动画结束 */
+    70%, 90% {
+        transform: translateY(0);
+    }
+}
+
+
+.avatar-img {
+    position: relative;
+    overflow: visible;
+}
+.avatar-img img{
+    border-radius: 50%;
+    transition: transform 0.3s ease-out;
+}
+
+.avatar-img:hover::before{
+    animation: shake-once 1s ease-in-out 1;
+}
+.avatar-img::before{
+    content: "";
+    position: absolute;
+    top: -55px;
+    right: -25px;
+    width: 136px;
+    height: 136px;
+    background-image: url("/img/theme_christmas/Christmas_hat2.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index:1;
+}
+
+
+.article-title:hover::before{
+    animation: bounce-thrice 1.2s ease-in-out 1;
+}
+
+.article-title{
+    position: relative;
+    padding-left:32px;
+    overflow: visible;
+}
+
+.article-title::before{
+    content: "";
+    position: absolute;
+    top: 0.1px;
+    left: 0px;
+    width: 32px;
+    height: 32px;
+    background-image: url("/img/theme_christmas/4.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index:100;
+    transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+body,html{
+    cursor: url('/img/theme_christmas/cursor_.png') 10 4, default !important;
+}
+
+a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-meta-date {
+    cursor: url('/img/theme_christmas/cursor_.png') 10 4, default !important;
+}
+
+#nav{
+    position: relative;
+}
+
+#nav::before{
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 5px;
+    width: 64px;
+    height: 64px;
+    background-image: url("/img/theme_christmas/Christmas_hat.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index:100;
+    transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#nav:hover::before{
+    animation: shake-once 1s ease-in-out 1;
+}
+
+#post-info{
+    position: relative;
+    padding-left: 35px; 
+}
+
+.post-title{
+    overflow: visible !important;
+}
+
+.post-title::before{
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: -30px;
+    width: 64px;
+    height: 64px;
+    background-image: url("/img/theme_christmas/10.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index:100;
+    transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.post-title:hover::before{
+    animation: shake-once 1s ease-in-out 1;
+}
+
+
+/***************全局下雪***************/
+/* ===== 1. 全局下雪层 ===== */
+#snow-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;          /* 保证在最上层 */
+  overflow: hidden;
+}
+
+/* 单个雪花 */
+.snowflake {
+  position: absolute;
+  top: -10px;
+  color: #fff;
+  font-size: 12px;
+  opacity: 0.9;
+  animation: snow-fall linear infinite;
+}
+
+/* 简单的下落动画，飘到屏幕外 */
+@keyframes snow-fall {
+  to {
+    transform: translateY(110vh);
+    opacity: 0.2;
+  }
+}
+
+/* ===== 2. 卡片“积雪”效果：向下扩展 + 渐变透明 ===== */
+
+/* 卡片自身可以继续保持原来的圆角 + overflow:hidden */
+.recent-post-item,
+.card-widget,
+#post {
+  position: relative;
+  /* 如果你之前没写，这里可以顺手加上圆角（按你实际卡片） */
+  border-radius: 12px; 
+  overflow: hidden;  /* 雪在里面延伸，跟卡片圆角一起裁掉 */
+}
+
+/* 积雪条：从卡片顶部往下长 */
+.recent-post-item::before,
+.card-widget::before ,
+#post::before{
+  content: "";
+  position: absolute;
+
+  /* 轻微往上抬一点，让雪盖住上边缘，避免出现缝 */
+  top: -4px;
+  left: -4px;
+  width: calc(100% + 8px);
+
+  /* 高度由 --snow-level 控制：0~1 映射到 4~24px，可自己改 */
+  height: calc(var(--snow-level, 0) * 20px + 4px);
+
+  /* 雪：上面白、下面淡的渐变 */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.98) 0%,   /* 顶部几乎纯白 */
+    rgba(255, 255, 255, 0.90) 35%,  /* 中间略淡 */
+    rgba(255, 255, 255, 0.05) 100%  /* 越往下越透明 */
+  );
+
+  /* 雪整体透明度随积雪程度变化：积得多就更“实” */
+  opacity: calc(0.25 + 0.75 * var(--snow-level, 0));
+
+  /* 顶部做一点点圆角，看起来像雪糊在圆角上 */
+  border-radius: 999px 999px 0 0;
+
+  pointer-events: none;
+  z-index: 1;
+
+  transition:
+    height 0.6s ease-out,
+    opacity 0.6s ease-out;
+}
+
+
+/* 从容器上方掉下来的小雪块（真实感版） */
+.snow-chunk {
+  position: absolute;
+  top: -10px;           /* 起点在容器上方一点 */
+  width: 20px;
+  height: 10px;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 1;
+
+  /* 用 CSS 变量控制抛物线终点 & 旋转角度 */
+  --snow-dx: 0px;       /* 水平位移 */
+  --snow-dy: 100px;     /* 垂直位移 */
+  --snow-rot: 18deg;    /* 最终旋转角 */
+  animation: snow-chunk-fall 2s ease-out forwards;
+}
+
+/* 抛物线 + 抖动 + 旋转 */
+@keyframes snow-chunk-fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.95;
+  }
+  30% {
+    transform: translate(calc(var(--snow-dx) * 0.4), calc(var(--snow-dy) * 0.3))
+               rotate(calc(var(--snow-rot) * 0.4));
+  }
+  55% {
+    transform: translate(calc(var(--snow-dx) * 0.7 + 4px),
+                         calc(var(--snow-dy) * 0.55 - 4px))
+               rotate(calc(var(--snow-rot) * 0.7));
+  }
+  75% {
+    transform: translate(calc(var(--snow-dx) * 0.9 - 3px),
+                         calc(var(--snow-dy) * 0.8 + 2px))
+               rotate(calc(var(--snow-rot) * 0.9));
+  }
+  100% {
+    transform: translate(var(--snow-dx), var(--snow-dy))
+               rotate(var(--snow-rot));
+    opacity: 0;
+  }
+}

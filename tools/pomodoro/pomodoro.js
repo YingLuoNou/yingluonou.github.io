@@ -48,6 +48,7 @@ function initPomodoro() {
     let isRunning = false;
     let isWorkSession = true;
     let currentTime = workTime;
+    let endTimestamp = null;
 
     // === Web Audio ===
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -260,24 +261,43 @@ function initPomodoro() {
         startBtn.textContent = isWorkSession ? "暂停" : "停止休息";
 
         if (isWorkSession) {
-            statusDisplay.textContent = "专注ing";
             enterFullscreen();
             requestWakeLock();
         }
 
+        // 关键：记录“应该结束”的绝对时间
+        const now = Date.now();
+        endTimestamp = now + currentTime * 1000;
+
         timerInterval = setInterval(() => {
-            currentTime--;
+            const now = Date.now();
+            const diffMs = endTimestamp - now;
+            currentTime = Math.max(0, Math.round(diffMs / 1000));
+
             updateDisplay();
-            if (currentTime <= 0) handleTimerComplete();
+
+            if (currentTime <= 0) {
+                // 防止多次触发
+                clearInterval(timerInterval);
+                timerInterval = null;
+                if (isRunning) {
+                    // 保证只处理一次完成逻辑
+                    handleTimerComplete();
+                }
+            }
         }, 1000);
     }
+
 
     function pauseTimer() {
         isRunning = false;
         clearInterval(timerInterval);
+        timerInterval = null;
+        endTimestamp = null;
         startBtn.textContent = "继续";
         releaseWakeLock();
     }
+
 
     function resetTimer() {
         pauseTimer();
@@ -293,6 +313,8 @@ function initPomodoro() {
     function handleTimerComplete() {
         pauseTimer();
         releaseWakeLock();
+
+        
 
         if (isWorkSession) {
             // 专注结束
@@ -328,6 +350,27 @@ function initPomodoro() {
     // === 事件绑定 ===
     startBtn.addEventListener("click", toggleTimer);
     resetBtn.addEventListener("click", resetTimer);
+
+        // 页面从后台/锁屏恢复时，校正一次剩余时间
+    let autoFinishedWhileHidden = false;
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && isRunning && endTimestamp) {
+            const now = Date.now();
+            const diffMs = endTimestamp - now;
+            currentTime = Math.max(0, Math.round(diffMs / 1000));
+
+            if (currentTime <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                autoFinishedWhileHidden = true;
+                handleTimerComplete();
+            } else {
+                updateDisplay();
+            }
+        }
+    });
+
 
     settingsBtn.addEventListener("click", () => {
         settingsPanel.classList.toggle("hidden");
