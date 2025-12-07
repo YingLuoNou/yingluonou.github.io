@@ -261,6 +261,7 @@ function initPomodoro() {
         startBtn.textContent = isWorkSession ? "暂停" : "停止休息";
 
         if (isWorkSession) {
+            statusDisplay.textContent = "专注ing";
             enterFullscreen();
             requestWakeLock();
         }
