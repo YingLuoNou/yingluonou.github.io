@@ -1,0 +1,377 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Bitcoin：一种代码即法律的共识交易货币 | YangLuoNou's Blog</title><meta name="author" content="YangLuoNou"><meta name="copyright" content="YangLuoNou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="#引言——传统货币的弊端 我们大多在使用的货币都存在着一个个中央管理机构，例如银行、财政机关等。这使得我们的货币必须建立在一个信任这些管理机构的基础上，假如你所持有的货币对应的中央机构突然不干了，或者操作了很多不合法[1]的交易，这就会导致货币体系的崩塌，你所持有的货币不会再被社会所认可，你的货币也就变得一文不值了。 为了解决这个信任问题，创造出一种不需要中央机构及管理员就能自行运转的货币系统，中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bitcoin：一种代码即法律的共识交易货币">
+<meta property="og:url" content="https://www.yangluonou.space/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/index.html">
+<meta property="og:site_name" content="YangLuoNou&#39;s Blog">
+<meta property="og:description" content="#引言——传统货币的弊端 我们大多在使用的货币都存在着一个个中央管理机构，例如银行、财政机关等。这使得我们的货币必须建立在一个信任这些管理机构的基础上，假如你所持有的货币对应的中央机构突然不干了，或者操作了很多不合法[1]的交易，这就会导致货币体系的崩塌，你所持有的货币不会再被社会所认可，你的货币也就变得一文不值了。 为了解决这个信任问题，创造出一种不需要中央机构及管理员就能自行运转的货币系统，中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4">
+<meta property="article:published_time" content="2025-12-12T14:50:01.000Z">
+<meta property="article:modified_time" content="2025-12-12T15:56:31.753Z">
+<meta property="article:author" content="YangLuoNou">
+<meta property="article:tag" content="加密货币">
+<meta property="article:tag" content="原理">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="比特币">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Bitcoin：一种代码即法律的共识交易货币",
+  "url": "https://www.yangluonou.space/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/",
+  "image": "https://avatars.githubusercontent.com/u/87926896?s=96&v=4",
+  "datePublished": "2025-12-12T14:50:01.000Z",
+  "dateModified": "2025-12-12T15:56:31.753Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "YangLuoNou",
+      "url": "https://yingluonou.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/"><link rel="canonical" href="https://www.yangluonou.space/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1B0C09')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Bitcoin：一种代码即法律的共识交易货币',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/normal.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="web_bg" style="background-image: url(https://random-img-api.yangluonou.space/bg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">YangLuoNou's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Bitcoin：一种代码即法律的共识交易货币</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Bitcoin：一种代码即法律的共识交易货币</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-12T14:50:01.000Z" title="发表于 2025-12-12 22:50:01">2025-12-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-12T15:56:31.753Z" title="更新于 2025-12-12 23:56:31">2025-12-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8/">技术应用</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><h2 id="引言——传统货币的弊端"><a class="header-anchor" href="#引言——传统货币的弊端">#</a>引言——传统货币的弊端</h2>
+<p>我们大多在使用的货币都存在着一个个中央管理机构，例如银行、财政机关等。这使得我们的货币必须建立在一个信任这些管理机构的基础上，假如你所持有的货币对应的中央机构突然不干了，或者操作了很多不合法<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>的交易，这就会导致货币体系的崩塌，你所持有的货币不会再被社会所认可，你的货币也就变得一文不值了。<br>
+为了解决这个信任问题，创造出一种不需要中央机构及管理员就能自行运转的货币系统，中本聪<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>于2008年10月31日发表了关于比特币的论文，创造出了比特币这种不需要任何中央管理机构的而是基于共识主动性的货币系统。</p>
+<h2 id="安全的身份验证"><a class="header-anchor" href="#安全的身份验证">#</a>安全的身份验证</h2>
+<p>比特币整个货币系统其实并不存在真正意义上的某种货币，而更像是一个账本。一个任何人都可以往上添加自己交易记录<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>的账本。<br>
+在银行进行交易必须证明你是这笔钱的主人，只需要你有银行给你的银行账号和密码，你就能向银行证明你的身份，就可以对自己拥有的货币进行交易。而比特币的去中心化运行方式使得没有一个独立的机构去验证你的身份，或者说验证这笔交易记录是不是你自己写的，因此我们需要一种方式实现只有你自己可以进行的操作，而其他人可以验证你的操作却不能重复你的操作，这时候聪明的你一定会想到非对称性加密，没错，比特币创建交易记录的身份验证就是依靠的<strong>私钥与公钥非对称式加密</strong>进行的。</p>
+<h3 id="数字签名：非对称式加密"><a class="header-anchor" href="#数字签名：非对称式加密">#</a>数字签名：非对称式加密</h3>
+<p>非对称式加密算法具体实现方式内容较多，在此仅作介绍（也许后面还会单独出文章，<s>maybe吧</s>）<br>
+非对称式密码学有公钥和私钥两个概念，公钥是通过私钥进行一系列的数学算法生成的。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212184810.webp" alt="非对称式加密">其中，私钥是你自己要保护好的身份证明，而公钥可以公开给其他人。拥有私钥的用户可以将信息使用私钥加密得到密文，而其他用户可以使用公钥解密该密文获得明文，接下来就是这种算法的核心特性了：<strong>使用公钥加密的密文不能被公钥解密，只有使用私钥加密的密文可以被公钥解密</strong>。这个特性被用于<strong>数字签名</strong>。<br>
+这样，使用私钥的用户只需要将其交易数据信息使用私钥进行加密，其他用户即可使用公钥验证是不是拥有私钥的用户进行的操作，达到了身份验证的目的。当然为了防止交易数据过多而产生的密文过长，导致解密时间过长影响效率，这里加密的信息并不是明文的交易数据，而是经过SHA256哈希算法（下文会提及）处理的交易数据，这样保证了无论多少交易数据，需要加密的明文都是固定长度的。<br>
+当然还有一个特性被用于加密传输数据：使用公钥加密的密文仅能被私钥解密。在比特币系统中，仅需要数字签名这一特性即可。</p>
+<h3 id="校验信息：哈希算法"><a class="header-anchor" href="#校验信息：哈希算法">#</a>校验信息：哈希算法</h3>
+<p><img src="/img/Bitcoin/Pasted_image_20251212190423.webp" alt="哈希算法">哈希算法是一种校验数据的算法，特点是无论放入什么类型的数据，多大的数据，最终输出的都是固定长度的校验值，且该校验值具有雪崩性，即原数据即使改了1个bit的数据也会导致最终结果发生翻天覆地的变化，这就会出现一个原始数据“只能”与一个哈希值一一对应，但在理论上来说，一个输入为无穷，输出为有边界的系统，每个输出一定是对应无穷个输入的，但实际上两个数据的哈希值相等的概率小到可以忽略不计，尤其是SHA256这种安全系数极高的哈希算法。哈希算法的雪崩性也导致你无法通过修改数据中的几个值来推测出其哈希值会发生什么样的变化。其算法具体实现比较复杂，此处不再赘述（后面应该还会出一篇文章，这个应该能出）</p>
+<h2 id="不可篡改的账本"><a class="header-anchor" href="#不可篡改的账本">#</a>不可篡改的账本</h2>
+<p>比特币的账本结构是对区块链技术的第一个大规模，去中心化且成功的实际应用。没错，就是一几年时炒的很火的区块链技术。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212191512.webp" alt="区块链技术">比特币单个账本——<strong>区块</strong>，<strong>由许多交易记录构成</strong>，你所拥有的比特币就是所有向你转账的记录减去你转出的比特币<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>，每次你的交易都会给到比特币网络中的<strong>区块制作者</strong>，这些区块制作者会先检验你的剩余比特币是否足以支撑你的交易，如果通过才会将你的交易记录记在区块内。所以比特币网络中所有人的交易记录都在一个公共的大记账本上——<strong>区块链</strong>。</p>
+<blockquote>
+<p>还有一个比较有趣的技术细节，当张三给你转了100个比特币，当你想转给李四50个比特币时，账单中记录的是找零方式拆分张三给你的比特币，即：张三–&gt;你–&gt;李四 100个比特币，李四–&gt;你50个比特币</p>
+</blockquote>
+<p><img src="/img/Bitcoin/Pasted_image_20251212190918.webp" alt="区块链">比特币的总账本区块链是由一个个区块构成，为了防止已有的区块链被篡改，每个区块都会记录着<strong>前一个区块的SHA256哈希值</strong>。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212192015.webp" alt="区块链2">如果一个区块的哈希值被发现与前一个区块的哈希值不一致，则这个区块会被<strong>丢弃</strong>，将被拒绝添加入区块链中。此时，善于思考的你可能会发现，那如果我篡改最后一个区块的话是不是就不会被发现了，了解完整个比特币的区块链技术和共识验证系统，你就会明白：这会非常艰难。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212191625.webp" alt="区块链3">接下来要解决的一个问题是，这么多设备，有的在线，有的不在线，有的延时高，有的延时低，如何进行<strong>同步区块链数据</strong>呢？这在中心化的系统中不是问题。但为了去中心化，比特币使用了最长链原则，也就是说，整个比特币网络中，只有<strong>最长的合法<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>的区块链</strong>为主链，所有其他网络节点都会去同步最长的那条区块链。这样即使你很长时间没有上线，下次上线只需要同步符合规定的最长的区块链即可同步数据</p>
+<h2 id="独特的记账方式"><a class="header-anchor" href="#独特的记账方式">#</a>独特的记账方式</h2>
+<p>解决完了同步问题，接下来还存在一个严重的问题，因为各种原因，可能是网络延时等没有及时同步的各种问题，导致有<strong>两个甚至更多个</strong>区块制作者向同一个区块后方添加不同的区块，会导致区块链不再是单独的一条，而是有甚至成千上万个分支的链条，这样会导致不同的链路你的剩余货币变得不一样。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212192344.webp" alt="区块链分支">为了防止这种情况发生，比特币给出了一个几乎完美的方法来规避在同一时间有两个甚至更多区块制造者向同一个区块链结尾添加区块，那就是大名鼎鼎的“挖矿”</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212194230.webp" alt="区块头">即每个区块制造者必须对自己制作的区块加上一个随机数然后计算其哈希值，如果该哈希值是符合要求的哈希值，则允许<sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>将制作好的区块放到现有区块链尾端，并会给区块制作者一定比特币作为报酬。这个要求一般是<strong>SHA256哈希值的前n位为0</strong>，这个n难度位是<strong>动态调整</strong>的，致使能够成功将自己制作的区块链接到主区块链尾端的区块制作者<strong>平均在10分钟内只能有一位</strong>。</p>
+<h2 id="自然的发行方法"><a class="header-anchor" href="#自然的发行方法">#</a>自然的发行方法</h2>
+<p>比特币作为一种<strong>没有“管理员”的货币</strong>，那么它应该如何发行呢？比特币的发行完全是由代码控制的，遵循一套严格的、不可篡改的数学规则。其发行过程其实前文已经提到了，聪明的你可能注意到了，没错，就是给区块制作者的<strong>报酬</strong>，也就是“挖矿”获得的“矿石”。每个区块制作者可以获得<strong>一定量的报酬和为交易用户记录交易的手续服务费</strong>。这个报酬并非是恒定的，而是<strong>每4年进行减半</strong>，从2009年的50比特币，到2012年的25比特币。挖矿得到的报酬会无限趋近于零，最终在数学模型下比特币最多只能发行2100万枚，即通缩模型<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>。其过程类似于挖矿，越挖越少。</p>
+<h2 id="还有问题？"><a class="header-anchor" href="#还有问题？">#</a>还有问题？</h2>
+<p>其实比特币的主要安全机制就是<strong>共识主动性</strong>，即如果你不遵守比特币的规则，则几乎<em><strong>所有人都得不到利</strong></em>，自然大多数使用者都会自觉的维护整个系统的安全，遵守整个系统的规则，可以看看下面几个问题示例</p>
+<h3 id="为什么比特币会丢失"><a class="header-anchor" href="#为什么比特币会丢失">#</a>为什么比特币会丢失</h3>
+<p>在比特币暴涨的那个年代，经常看到很多新闻报道因为硬盘丢失或者损坏导致多少多少比特币，但根据我们刚刚给出的原理，比特币实际是一个账单，并没有实际的比特币，所以所谓的丢失了比特币实际上是把自己的私钥丢失了，也就丢失了整个私钥账号下的所有比特币，因此这些比特币将会成为永远也不可能再被操作的“死账”，最终会导致比特币总量进一步下降。</p>
+<h3 id="在没有比特币的剩余下向他人转账"><a class="header-anchor" href="#在没有比特币的剩余下向他人转账">#</a>在没有比特币的剩余下向他人转账</h3>
+<p><img src="/img/Bitcoin/Pasted_image_20251212195832.webp" alt="img">这样的话你的记录会被其他区块制作者检查出来并拒绝掉，因为如果即使有一个区块制作者讲你的异常数据加入了其中，并且正好获得了当时的添加区块权，将你的异常数据添加到了整个主区块链尾端，其他区块制作者获取区块链时会检查出来这个异常的区块，并将其丢弃，然后在前一个区块尾端继续添加区块，随着时间累计，这个异常区块会因为不是最长的区块链而被丢弃掉，导致区块制作者花费巨量计算能力“挖出的矿”被否定而损失掉了，所以无论在谁的角度看，伪造这种不合法的记录都是弊远大于利的。</p>
+<h3 id="自己创造主链"><a class="header-anchor" href="#自己创造主链">#</a>自己创造主链</h3>
+<p>可不可以从某个区块开始自己创造一条<strong>比主链还长</strong>的区块链而使我的区块链成为主链，来撤销一些区块中我不想要的交易记录。这个方法理论确实可行，但需要至少整个系统中的51%的算力才能实现<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>，即著名的<strong>51%攻击</strong>，当比特币区块制作者不断增多，达到这一要求的成本物力人力将会消耗非常高。并且一旦达成这种攻击，比特币的信任体系将会崩塌，其市值也会暴跌，这样对于攻击者来说花了如此高的代价自己也得不到什么好处，因此几乎不会出现这样的攻击者。</p>
+<h3 id="篡改一个区块"><a class="header-anchor" href="#篡改一个区块">#</a>篡改一个区块</h3>
+<p>先回答文中的问题，由于最后一个区块没有后面的区块记录其哈希值，我能够篡改最后一个区块内的交易记录来达到破坏整个交易系统吗？实际上，了解了”挖矿“的机制后，显然，当你篡改该最后一个区块后，必须<strong>重新计算</strong>最后一个区块的随机数来使其哈希值符合对应的要求，这一点就会使篡改最后一个区块的<strong>成本剧增</strong>。并且不光有计算成本，还有时间成本，因为你必须保证在你篡改最后一个区块后计算其随机数时，不会有其它区块制作者在该未被篡改的区块后方继续添加其它区块。且篡改必须合法，因为每一个区块制作者都会检查前面所有区块的合法性，一旦遇到了不合法的区块便会<strong>丢弃其及后方所有的区块</strong>，从该不合法的区块前面的区块继续添加。</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212192015.webp" alt="img">而对于想篡改前面区块的攻击者来说，其成本将会剧增，因为改了一个区块的哈希值，该区块及后方的所有区块的哈希值全部要重新计算，并且其随机数也因为哈希值的改变而<strong>全部需要重新计算</strong>。因此此时问题就回到了我要自己创造主链的51%攻击了。</p>
+<h3 id="如果同一时间出现了两个”矿“"><a class="header-anchor" href="#如果同一时间出现了两个”矿“">#</a>如果同一时间出现了两个”矿“</h3>
+<p>虽然说这个概率非常小，但在大量的区块制作者下不容忽略，如果一个区块后面同时连接了两个区块，接下来，这两个区块上的区块制作者会继续制作下去，直到出现第一个较长的链路，则那个短的链路则<strong>直接被抛弃</strong>，所有区块制作者均回到最长的那个主链路继续制作区块</p>
+<p><img src="/img/Bitcoin/Pasted_image_20251212194751.webp" alt="img">这就会出现一个问题：确认交易的时间可能会比较长，一般在新生成3~4个区块后这笔交易便几乎可以确定下来了。</p>
+<h2 id="加密货币掀起的波澜"><a class="header-anchor" href="#加密货币掀起的波澜">#</a>加密货币掀起的波澜</h2>
+<p>自从比特币发布以来，其市值一路飙升，展现了基于区块链技术的比特币的成功。由此业界掀起了一阵区块链热，谁都想将自己的行业加上区块链搞去中心化。各种行业争相模仿比特币的区块链化技术，全行业患上了“区块链焦虑症”。甚至只要自己行业中有区块链三个字都可以让自己的市值暴增</p>
+<ul>
+<li>金融行业，澳洲证交所（ASX）在 2015 年宣布，要用区块链技术（基于 Digital Asset 公司方案）替换其使用了几十年的清算系统 CHESS。然而金融界所需要的极高的并发和极低的延迟正是区块链技术的痛点，最终2022年底，项目彻底取消，ASX 宣布注销 1.7 亿美元（约 2.5 亿澳元）的投资。</li>
+<li>传统摄影巨头柯达也曾有过区块链梦——柯达币 (KodakCoin)。在数码相机和智能手机的时代，传统胶卷产业非常难过。2018年，正值区块链炒作顶峰，百年胶卷老店柯达突然宣布进军区块链，做出了三个大动作：<code>1.创建KODAKOne 平台： 声称建立一个基于区块链的图片版权管理库。摄影师把照片上传，利用区块链不可篡改的特性确权。</code> <code>2.发行柯达币 (KodakCoin)： 发行一种专门的加密货币，作为平台内的支付手段。如果有人使用你的图，就自动给你转柯达币。</code> <code>3.“柯达矿机” (KashMiner)： （这是最荒诞的部分） 在当年的 CES 展会上，贴牌展示了一款比特币矿机。柯达甚至推出了“租赁方案”：你交 3400 美元租金，柯达帮你挖矿，承诺两年回报几万美元。</code>消息一出，柯达股价单日暴涨 119%，随后几天内翻了三倍。但由于区块链只能保证“链上”的数据不可篡改。 例如如果我在 KODAKOne 上传了一张图，区块链确实记录了“这图归我”。 但是，盗图的人根本不上你的链。他直接右键保存，发到自己的博客、朋友圈或论坛里。柯达完全将区块链用错了地方，最终导致柯达币几乎没人使用，币价归零。而柯达矿机只是一个为了蹭比特币热度的骗局。柯达股价最后跌回平常水平，甚至更低。</li>
+<li>股市的黑色幽默：长岛冰茶 (Long Island Iced Tea)。2017 年，一家名为“长岛冰茶公司”的饮料厂，突然把名字改成了“长区块链公司” (Long Blockchain Corp)。声称要转型投资区块链，股价当天暴涨 200%。但是他们没有技术，没有产品，只是改了个名。最终被调查退市。<br>
+可见当时市场对区块链这项技术多么非理性。任何一个产品都要套上区块链的噱头，甚至不管区块链的劣势，想要”利用“区块链的缺点。</li>
+</ul>
+<p>所以，任何新技术的进步甚至任何事物的成功而去盲目跟风是非常不理智的，适合的才是最好的。</p>
+<blockquote>
+<p>“如果你的项目有一个‘管理员’可以重置密码或回滚数据，那么你根本不需要区块链，你需要的是一个 Postgres 数据库。”</p>
+</blockquote>
+<p>如果您觉得这篇文章对您有帮助的话，不妨收藏该页面，分享给更多朋友，感谢您的阅读。有问题欢迎评论区留言，共同交流。</p>
+<p><em>评论区请友善交流，无关话题将会被删除</em></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>比如未经许可从别人钱包里发起交易，或者肆意创造货币 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>网名，并非真名 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>此处的交易记录除比特币的矿工奖励机制外仅指自己转给其他人的记录，就像我们在银行里你只能转给别人钱，不能让别人转给自己钱 <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>比特币中还有比特币的发行——记账的奖励（挖矿）后文会提及 <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>这里的合法是指的符合比特币区块链中初最开始的区块，其他区块都包含前一个区块的哈希值，且正确 <a href="#fnref5" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn6" class="footnote-item"><p>还会有一步检验你区块中记录的交易记录是否合法，比如如果你已经没有比特币了，但你还是向区块中添加了转出交易记录，那么这样这个区块就直接所废了，区块制作者所辛辛苦苦挖出来的随机数也就毫无价值了 <a href="#fnref6" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn7" class="footnote-item"><p>总量固定，理论上越来越稀缺 <a href="#fnref7" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn8" class="footnote-item"><p>另有说法是根据定理控制33%以上算力即可实现 <a href="#fnref8" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yingluonou.github.io">YangLuoNou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.yangluonou.space/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/">https://www.yangluonou.space/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.yangluonou.space" target="_blank">YangLuoNou's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81/">加密货币</a><a class="post-meta__tags" href="/tags/%E6%AF%94%E7%89%B9%E5%B8%81/">比特币</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E7%90%86/">原理</a><a class="post-meta__tags" href="/tags/%E5%AE%89%E5%85%A8/">安全</a></div><div class="post-share"><div class="social-share" data-image="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/11/29/web-develop1/" title="配置属于自己的免费随机图库api"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">配置属于自己的免费随机图库api</div></div><div class="info-2"><div class="info-item-1">#前言 开发本纯静态博客时，想对背景，顶图，底图等进行随机切换。由于该主题在一些地方没有添加随机图片功能，改源码又比较麻烦，所以笔者打算部署一个自己的随机图库 API。笔者又没有多少米，所以依赖各大厂商的 free 套餐，部署一个免费的随机图库 API。 想要开发一个这样的 API，对于我来说，有以下需求：  随机返回图片 对图片进行分类 部署简单 免费，免费，还是免费  通过查询，最终选择了 Cloudflare 的 Workers &amp; Pages 进行云部署 JS 代码 + GitHub 仓库 存放图片的方案。 #部署教程 #步骤一：创建 GitHub 图片仓库 注册登录 Cloudflare 和 GitHub 就不再赘述。 首先，在 GitHub 中创建一个图片仓库，可以参考以下文件夹结构： 123456789├───test │   ├───1.jpg│   ├───2.jpg│   ├───3.jpg├───background|   ├───1.jpg|   ├───2.jpg|   ├───3.jpg...... 即直接按分类作为仓库目录存放图片，图片格式为...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">YangLuoNou</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YingLuoNou"><i class="fab fa-github"></i><span>Github</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">仍在建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%E2%80%94%E2%80%94%E4%BC%A0%E7%BB%9F%E8%B4%A7%E5%B8%81%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="toc-number">1.</span> <span class="toc-text">引言——传统货币的弊端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="toc-number">2.</span> <span class="toc-text">安全的身份验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%EF%BC%9A%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%BC%8F%E5%8A%A0%E5%AF%86"><span class="toc-number">2.1.</span> <span class="toc-text">数字签名：非对称式加密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%A1%E9%AA%8C%E4%BF%A1%E6%81%AF%EF%BC%9A%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">校验信息：哈希算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E7%AF%A1%E6%94%B9%E7%9A%84%E8%B4%A6%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">不可篡改的账本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8B%AC%E7%89%B9%E7%9A%84%E8%AE%B0%E8%B4%A6%E6%96%B9%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">独特的记账方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E7%84%B6%E7%9A%84%E5%8F%91%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">自然的发行方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%98%E6%9C%89%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-number">6.</span> <span class="toc-text">还有问题？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E7%89%B9%E5%B8%81%E4%BC%9A%E4%B8%A2%E5%A4%B1"><span class="toc-number">6.1.</span> <span class="toc-text">为什么比特币会丢失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E6%B2%A1%E6%9C%89%E6%AF%94%E7%89%B9%E5%B8%81%E7%9A%84%E5%89%A9%E4%BD%99%E4%B8%8B%E5%90%91%E4%BB%96%E4%BA%BA%E8%BD%AC%E8%B4%A6"><span class="toc-number">6.2.</span> <span class="toc-text">在没有比特币的剩余下向他人转账</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%B7%B1%E5%88%9B%E9%80%A0%E4%B8%BB%E9%93%BE"><span class="toc-number">6.3.</span> <span class="toc-text">自己创造主链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%A1%E6%94%B9%E4%B8%80%E4%B8%AA%E5%8C%BA%E5%9D%97"><span class="toc-number">6.4.</span> <span class="toc-text">篡改一个区块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E5%90%8C%E4%B8%80%E6%97%B6%E9%97%B4%E5%87%BA%E7%8E%B0%E4%BA%86%E4%B8%A4%E4%B8%AA%E2%80%9D%E7%9F%BF%E2%80%9C"><span class="toc-number">6.5.</span> <span class="toc-text">如果同一时间出现了两个”矿“</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81%E6%8E%80%E8%B5%B7%E7%9A%84%E6%B3%A2%E6%BE%9C"><span class="toc-number">7.</span> <span class="toc-text">加密货币掀起的波澜</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/12/Bitcoin%EF%BC%9A%E4%B8%80%E7%A7%8D%E4%BB%A3%E7%A0%81%E5%8D%B3%E6%B3%95%E5%BE%8B%E7%9A%84%E5%85%B1%E8%AF%86%E4%BA%A4%E6%98%93%E8%B4%A7%E5%B8%81/" title="Bitcoin：一种代码即法律的共识交易货币">Bitcoin：一种代码即法律的共识交易货币</a><time datetime="2025-12-12T14:50:01.000Z" title="发表于 2025-12-12 22:50:01">2025-12-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/29/web-develop1/" title="配置属于自己的免费随机图库api">配置属于自己的免费随机图库api</a><time datetime="2025-11-29T14:00:00.000Z" title="发表于 2025-11-29 22:00:00">2025-11-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/28/hello-world/" title="Hello World">Hello World</a><time datetime="2025-11-28T11:05:17.146Z" title="发表于 2025-11-28 19:05:17">2025-11-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://random-img-api.yangluonou.space/footer);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By YangLuoNou</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.2</a></span></div><div class="footer_custom_text"><a href="/link/">友情链接</a> <br> Also by YingLuoNou!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = [{"createIssueManually":true}]
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liZZVKLKnfCNv1ai',
+      clientSecret: '44090ae3c5218d9194dcf8015875e4d5c701a560',
+      repo: 'gitalk_from_blog',
+      owner: 'YingLuoNou',
+      admin: ['YingLuoNou'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '7457c4da56e292b3458d6c8cbacd2356'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/live2d-widget/dist/autoload.js"></script><script src="/js/gitalk-mode-switcher.js"></script><script src="/tools/pomodoro/pomodoro.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

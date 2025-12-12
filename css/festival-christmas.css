@@ -6,103 +6,56 @@ html[data-theme='dark']{
     --card-bg: rgba(0, 0, 0, 0.5);
 }
 
-.card-announcement .item-headline i.fa-shake {
-  animation: none !important;
-}
+/* ================= 动画定义 (保留在全局) ================= */
 
-.card-announcement .item-headline i {
-  color: inherit !important;
-}
-
-.avatar-img img:hover {
-  transform: none !important;
-}
-
-
-/* 1. 定义左右摇摆动画 */
 @keyframes shake-once {
-    /* 动画的起始和结束状态：位置不变 */
-    0%, 100% {
-        transform: translateX(0) rotate(0deg);
-    }
-    /* 第一次摇摆（向左） */
-    10% {
-        transform: translateX(-3px) rotate(-3deg);
-    }
-    /* 第一次摇摆（向右） */
-    20% {
-        transform: translateX(3px) rotate(3deg);
-    }
-    /* 第二次摇摆（向左） */
-    30% {
-        transform: translateX(-2px) rotate(-2deg);
-    }
-    /* 第二次摇摆（向右） */
-    40% {
-        transform: translateX(2px) rotate(2deg);
-    }
-    /* 第三次摇摆（回到中心） */
-    50% {
-        transform: translateX(0) rotate(0deg);
-    }
-    /* 保持静止直到动画结束 */
-    60%, 90% {
-        transform: translateX(0) rotate(0deg);
-    }
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    10% { transform: translateX(-3px) rotate(-3deg); }
+    20% { transform: translateX(3px) rotate(3deg); }
+    30% { transform: translateX(-2px) rotate(-2deg); }
+    40% { transform: translateX(2px) rotate(2deg); }
+    50% { transform: translateX(0) rotate(0deg); }
+    60%, 90% { transform: translateX(0) rotate(0deg); }
 }
 
 @keyframes bounce-thrice {
-    /* 动画的起始状态：垂直位置不变 */
-    0%, 100% {
-        transform: translateY(0);
-    }
-    /* 第一次弹跳：快速下沉 */
-    10% {
-        transform: translateY(5px);
-    }
-    /* 第一次弹跳：快速回弹并略微上浮 */
-    20% {
-        transform: translateY(-5px);
-    }
-    
-    /* 第二次弹跳：快速下沉 */
-    30% {
-        transform: translateY(3px);
-    }
-    /* 第二次弹跳：快速回弹并略微上浮 */
-    40% {
-        transform: translateY(-3px);
-    }
-    
-    /* 第三次弹跳：快速下沉 */
-    50% {
-        transform: translateY(1px);
-    }
-    /* 第三次弹跳：回到原始位置 */
-    60% {
-        transform: translateY(0);
-    }
-    
-    /* 动画的其余时间保持静止，直到动画结束 */
-    70%, 90% {
-        transform: translateY(0);
-    }
+    0%, 100% { transform: translateY(0); }
+    10% { transform: translateY(5px); }
+    20% { transform: translateY(-5px); }
+    30% { transform: translateY(3px); }
+    40% { transform: translateY(-3px); }
+    50% { transform: translateY(1px); }
+    60% { transform: translateY(0); }
+    70%, 90% { transform: translateY(0); }
 }
 
+/* ================= 装饰样式 (限制作用域) ================= */
+/* 只有 html 标签上有 christmas-on 类时才生效 */
 
-.avatar-img {
+/* 1. 公告栏抖动控制 */
+html.christmas-on .card-announcement .item-headline i.fa-shake {
+  animation: none !important;
+}
+html.christmas-on .card-announcement .item-headline i {
+  color: inherit !important;
+}
+
+/* 2. 头像圣诞帽与摇晃 */
+html.christmas-on .avatar-img {
     position: relative;
     overflow: visible;
 }
-.avatar-img img{
+html.christmas-on .avatar-img img{
     border-radius: 50%;
     transition: transform 0.3s ease-out;
 }
-
-.avatar-img:hover::before{
+html.christmas-on .avatar-img img:hover {
+  transform: none !important;
+}
+html.christmas-on .avatar-img:hover::before{
     animation: shake-once 1s ease-in-out 1;
 }
-.avatar-img::before{
+html.christmas-on .avatar-img::before{
     content: "";
     position: absolute;
     top: -55px;
@@ -116,18 +69,16 @@ html[data-theme='dark']{
     z-index:1;
 }
 
-
-.article-title:hover::before{
+/* 3. 文章标题装饰 */
+html.christmas-on .article-title:hover::before{
     animation: bounce-thrice 1.2s ease-in-out 1;
 }
-
-.article-title{
+html.christmas-on .article-title{
     position: relative;
     padding-left:32px;
     overflow: visible;
 }
-
-.article-title::before{
+html.christmas-on .article-title::before{
     content: "";
     position: absolute;
     top: 0.1px;
@@ -142,19 +93,27 @@ html[data-theme='dark']{
     transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-body,html{
+/* 4. 鼠标样式自定义 */
+html.christmas-on,
+html.christmas-on body {
     cursor: url('/img/theme_christmas/cursor_.png') 10 4, default !important;
 }
 
-a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-meta-date {
+html.christmas-on a, 
+html.christmas-on a *, 
+html.christmas-on button, 
+html.christmas-on input[type="submit"], 
+html.christmas-on input[type="button"],
+html.christmas-on #scroll-down,
+html.christmas-on .post-meta-date {
     cursor: url('/img/theme_christmas/cursor_.png') 10 4, default !important;
 }
 
-#nav{
+/* 5. 导航栏圣诞帽 */
+html.christmas-on #nav{
     position: relative;
 }
-
-#nav::before{
+html.christmas-on #nav::before{
     content: "";
     position: absolute;
     top: -14px;
@@ -168,21 +127,19 @@ a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-me
     z-index:100;
     transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-
-#nav:hover::before{
+html.christmas-on #nav:hover::before{
     animation: shake-once 1s ease-in-out 1;
 }
 
-#post-info{
+/* 6. 首页文章列表装饰 */
+html.christmas-on #post-info{
     position: relative;
     padding-left: 35px; 
 }
-
-.post-title{
+html.christmas-on .post-title{
     overflow: visible !important;
 }
-
-.post-title::before{
+html.christmas-on .post-title::before{
     content: "";
     position: absolute;
     top: 5px;
@@ -196,23 +153,19 @@ a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-me
     z-index:100;
     transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-
-.post-title:hover::before{
+html.christmas-on .post-title:hover::before{
     animation: shake-once 1s ease-in-out 1;
 }
 
 
-/***************全局下雪***************/
-/* ===== 1. 全局下雪层 ===== */
-#snow-layer {
+/* 7. 全局下雪层 (加前缀更安全) */
+html.christmas-on #snow-layer {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9999;          /* 保证在最上层 */
+  z-index: 9999;
   overflow: hidden;
 }
-
-/* 单个雪花 */
 .snowflake {
   position: absolute;
   top: -10px;
@@ -221,8 +174,6 @@ a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-me
   opacity: 0.9;
   animation: snow-fall linear infinite;
 }
-
-/* 简单的下落动画，飘到屏幕外 */
 @keyframes snow-fall {
   to {
     transform: translateY(110vh);
@@ -230,60 +181,42 @@ a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-me
   }
 }
 
-/* ===== 2. 卡片“积雪”效果：向下扩展 + 渐变透明 ===== */
-
-/* 卡片自身可以继续保持原来的圆角 + overflow:hidden */
-.recent-post-item,
-.card-widget,
-#post {
+/* 8. 卡片“积雪”效果 */
+html.christmas-on .recent-post-item,
+html.christmas-on .card-widget,
+html.christmas-on #post,
+html.christmas-on #page{
   position: relative;
-  /* 如果你之前没写，这里可以顺手加上圆角（按你实际卡片） */
-  border-radius: 12px; 
-  overflow: hidden;  /* 雪在里面延伸，跟卡片圆角一起裁掉 */
+  overflow: hidden;
 }
 
-/* 积雪条：从卡片顶部往下长 */
-.recent-post-item::before,
-.card-widget::before ,
-#post::before{
+html.christmas-on .recent-post-item::before,
+html.christmas-on .card-widget::before ,
+html.christmas-on #post::before,
+html.christmas-on #page::before{
   content: "";
   position: absolute;
-
-  /* 轻微往上抬一点，让雪盖住上边缘，避免出现缝 */
   top: -4px;
   left: -4px;
   width: calc(100% + 8px);
-
-  /* 高度由 --snow-level 控制：0~1 映射到 4~24px，可自己改 */
   height: calc(var(--snow-level, 0) * 20px + 4px);
-
-  /* 雪：上面白、下面淡的渐变 */
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.98) 0%,   /* 顶部几乎纯白 */
-    rgba(255, 255, 255, 0.90) 35%,  /* 中间略淡 */
-    rgba(255, 255, 255, 0.05) 100%  /* 越往下越透明 */
+    rgba(255, 255, 255, 0.98) 0%,   
+    rgba(255, 255, 255, 0.90) 35%, 
+    rgba(255, 255, 255, 0.05) 100% 
   );
-
-  /* 雪整体透明度随积雪程度变化：积得多就更“实” */
   opacity: calc(0.25 + 0.75 * var(--snow-level, 0));
-
-  /* 顶部做一点点圆角，看起来像雪糊在圆角上 */
   border-radius: 999px 999px 0 0;
-
   pointer-events: none;
   z-index: 1;
-
-  transition:
-    height 0.6s ease-out,
-    opacity 0.6s ease-out;
+  transition: height 0.6s ease-out, opacity 0.6s ease-out;
 }
 
-
-/* 从容器上方掉下来的小雪块（真实感版） */
+/* 碎雪块 */
 .snow-chunk {
   position: absolute;
-  top: -10px;           /* 起点在容器上方一点 */
+  top: -10px;
   width: 20px;
   height: 10px;
   background: #ffffff;
@@ -292,37 +225,151 @@ a, a *, button, input[type="submit"], input[type="button"],#scroll-down,.post-me
   opacity: 0.95;
   pointer-events: none;
   z-index: 1;
-
-  /* 用 CSS 变量控制抛物线终点 & 旋转角度 */
-  --snow-dx: 0px;       /* 水平位移 */
-  --snow-dy: 100px;     /* 垂直位移 */
-  --snow-rot: 18deg;    /* 最终旋转角 */
+  --snow-dx: 0px; 
+  --snow-dy: 100px;  
+  --snow-rot: 18deg;
   animation: snow-chunk-fall 2s ease-out forwards;
 }
 
-/* 抛物线 + 抖动 + 旋转 */
 @keyframes snow-chunk-fall {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-    opacity: 0.95;
-  }
-  30% {
-    transform: translate(calc(var(--snow-dx) * 0.4), calc(var(--snow-dy) * 0.3))
-               rotate(calc(var(--snow-rot) * 0.4));
-  }
-  55% {
-    transform: translate(calc(var(--snow-dx) * 0.7 + 4px),
-                         calc(var(--snow-dy) * 0.55 - 4px))
-               rotate(calc(var(--snow-rot) * 0.7));
-  }
-  75% {
-    transform: translate(calc(var(--snow-dx) * 0.9 - 3px),
-                         calc(var(--snow-dy) * 0.8 + 2px))
-               rotate(calc(var(--snow-rot) * 0.9));
-  }
-  100% {
-    transform: translate(var(--snow-dx), var(--snow-dy))
-               rotate(var(--snow-rot));
-    opacity: 0;
-  }
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.95; }
+  30% { transform: translate(calc(var(--snow-dx) * 0.4), calc(var(--snow-dy) * 0.3)) rotate(calc(var(--snow-rot) * 0.4)); }
+  55% { transform: translate(calc(var(--snow-dx) * 0.7 + 4px), calc(var(--snow-dy) * 0.55 - 4px)) rotate(calc(var(--snow-rot) * 0.7)); }
+  75% { transform: translate(calc(var(--snow-dx) * 0.9 - 3px), calc(var(--snow-dy) * 0.8 + 2px)) rotate(calc(var(--snow-rot) * 0.9)); }
+  100% { transform: translate(var(--snow-dx), var(--snow-dy)) rotate(var(--snow-rot)); opacity: 0; }
 }
+
+/* 9. 顶部彩灯样式 */
+#christmas-lights-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+.christmas-lights {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  overflow: visible; /* 修正光晕断层 */
+  white-space: nowrap;
+  width: 100%;
+  position: absolute;
+  top: -15px;
+}
+.christmas-lights li {
+  position: relative;
+  margin: 0 15px;
+  width: 12px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #f00;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-name: light-blink;
+  flex-shrink: 0;
+}
+.christmas-lights li::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  background: #444;
+  border-radius: 2px;
+}
+.christmas-lights li::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -20px;
+  width: 40px;
+  height: 14px;
+  border-bottom: 2px solid #444;
+  border-radius: 50%;
+  z-index: -1;
+}
+.christmas-lights li:first-child::after {
+  display: none;
+}
+.christmas-lights li:nth-child(4n+1) { background: #ff3333; box-shadow: 0 2px 12px rgba(255, 51, 51, 0.6); animation-delay: 0s; }
+.christmas-lights li:nth-child(4n+2) { background: #33ff33; box-shadow: 0 2px 12px rgba(51, 255, 51, 0.6); animation-delay: 0.5s; }
+.christmas-lights li:nth-child(4n+3) { background: #ffff33; box-shadow: 0 2px 12px rgba(255, 255, 51, 0.6); animation-delay: 1.0s; }
+.christmas-lights li:nth-child(4n+4) { background: #3333ff; box-shadow: 0 2px 12px rgba(51, 51, 255, 0.6); animation-delay: 1.5s; }
+
+@keyframes light-blink {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); box-shadow: 0 4px 20px currentColor; }
+}
+
+/* 10. 滚动条配色 (糖果色) */
+html.christmas-on ::selection {
+    background: #d32f2f;
+    color: #fff;
+}
+html.christmas-on ::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(
+        45deg,
+        #d32f2f 25%,
+        #ffffff 25%,
+        #ffffff 50%,
+        #d32f2f 50%,
+        #d32f2f 75%,
+        #ffffff 75%,
+        #ffffff
+    );
+    border-radius: 10px;
+}
+
+/* 11. 底部动态雪橇 (滚动触发版) */
+#santa-sleigh {
+    position: fixed;
+    bottom: 20px;
+    left: 100%;
+    width: 150px;
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    animation: sleigh-bob 3s ease-in-out infinite; 
+}
+#santa-sleigh.sleigh-active {
+    animation: 
+        sleigh-fly-once 6s linear forwards,
+        sleigh-bob 2s ease-in-out infinite;
+}
+@keyframes sleigh-fly-once {
+    0% { transform: translateX(0) rotate(-2deg); opacity: 0; left: 100%; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { transform: translateX(calc(-100vw - 300px)) rotate(5deg); opacity: 0; left: 100%; }
+}
+@keyframes sleigh-bob {
+    0%, 100% { margin-bottom: 0; }
+    50% { margin-bottom: 30px; }
+}
+@media (max-width: 768px) {
+    #santa-sleigh { width: 75px; bottom: 10px; }
+}
+
+/* 12. 鼠标点击糖果效果 */
+.click-candy {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  font-size: 24px;
+  user-select: none;
+  animation: candy-float-up 0.8s ease-out forwards;
+}
+
+@keyframes candy-float-up {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
+  40% { opacity: 0.9; transform: translate(-50%, -120%) scale(1.2) rotate(10deg); }
+  100% { opacity: 0; transform: translate(-50%, -250%) scale(1) rotate(-10deg); }
+}
+

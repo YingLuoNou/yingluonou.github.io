@@ -1,19 +1,27 @@
-:root{
+/* ================= 普通模式 (Normal Mode) ================= */
+/* 只有当 html 标签上【没有】christmas-on 类时，这些样式才会生效 */
+/* 这意味着：一旦开启节日特效，这里的样式会自动失效，避免冲突 */
+
+/* 1. 全局变量 (仅在非节日模式下生效) */
+:root:not(.christmas-on) {
     --card-bg: rgba(255, 255, 255, 0.5);
 }
 
-.avatar-img img:hover {
-  transform: none !important;
-}
-
-html[data-theme='dark']{
+html[data-theme='dark']:not(.christmas-on) {
     --card-bg: rgba(0, 0, 0, 0.5);
 }
 
-.card-announcement .item-headline i.fa-shake {
+/* 2. 禁止头像悬停放大 (仅在非节日模式下生效) */
+/* 加上 :not(.christmas-on) 后，节日模式下的摇晃动画就可以正常生效了 */
+html:not(.christmas-on) .avatar-img img:hover {
+  transform: none !important;
+}
+
+/* 3. 禁止公告栏图标抖动 (仅在非节日模式下生效) */
+html:not(.christmas-on) .card-announcement .item-headline i.fa-shake {
   animation: none !important;
 }
 
-.card-announcement .item-headline i {
+html:not(.christmas-on) .card-announcement .item-headline i {
   color: inherit !important;
 }

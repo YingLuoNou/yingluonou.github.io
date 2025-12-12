@@ -265,6 +265,7 @@ function initPomodoro() {
             enterFullscreen();
             requestWakeLock();
         }
+        
 
         // 关键：记录“应该结束”的绝对时间
         const now = Date.now();
