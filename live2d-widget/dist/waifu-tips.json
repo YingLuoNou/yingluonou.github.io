@@ -257,7 +257,7 @@
   },
   "models": [ {
     "name": "Shirai Kuroko",
-    "paths": ["https://raw.githubusercontent.com/zenghongtu/live2d-model-assets/master/assets/moc/kuroko/kuroko.model.json"],
+    "paths": ["/kuroko/kuroko.model.json"],
     "message": "来自 常盘台中学 的 白井黑子"
   }]
 }
