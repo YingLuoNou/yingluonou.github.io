@@ -119,6 +119,8 @@
       const s = document.createElement('span');
       s.className = 'snowflake';
       s.textContent = '❄';
+      s.style.fontSize = (5 + Math.random() * 5) + 'px';
+      s.style.opacity = 0.6;
       resetSnowflakeStyle(s, true);
       snowLayer.appendChild(s);
       s.addEventListener("animationiteration", () => {

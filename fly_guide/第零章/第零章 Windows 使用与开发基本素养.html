@@ -1,0 +1,464 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第零章 Windows 使用与开发基本素养 | YangLuoNou's Blog</title><meta name="author" content="YangLuoNou"><meta name="copyright" content="YangLuoNou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="#前言 进入实验室，你要认识到：以前你用电脑可能是为了消费内容（看视频、打游戏、写文档），而现在你用电脑是为了创造工具。你需要掌握它，而不是被它糊弄。如果电脑基本技能都掌握不好，后期在你需要大量使用电脑时（特别是我们飞控方向）可能会遇到各种“灵异事项”，也会导致与队友交流不畅，引发各种问题。因此有必要使用一个章节介绍基础的电脑知识与开发素养。 鉴于大家前期基础掌握并不一致，此文可能会对你已知的知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第零章 Windows 使用与开发基本素养">
+<meta property="og:url" content="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/%E7%AC%AC%E9%9B%B6%E7%AB%A0%20Windows%20%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E7%B4%A0%E5%85%BB.html">
+<meta property="og:site_name" content="YangLuoNou&#39;s Blog">
+<meta property="og:description" content="#前言 进入实验室，你要认识到：以前你用电脑可能是为了消费内容（看视频、打游戏、写文档），而现在你用电脑是为了创造工具。你需要掌握它，而不是被它糊弄。如果电脑基本技能都掌握不好，后期在你需要大量使用电脑时（特别是我们飞控方向）可能会遇到各种“灵异事项”，也会导致与队友交流不畅，引发各种问题。因此有必要使用一个章节介绍基础的电脑知识与开发素养。 鉴于大家前期基础掌握并不一致，此文可能会对你已知的知识">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4">
+<meta property="article:published_time" content="2025-12-23T09:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-23T10:33:14.501Z">
+<meta property="article:author" content="YangLuoNou">
+<meta property="article:tag" content=" 电子, 电子技术, 网络技术, 编程, blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第零章 Windows 使用与开发基本素养",
+  "url": "https://www.yangluonou.space/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/%E7%AC%AC%E9%9B%B6%E7%AB%A0%20Windows%20%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E7%B4%A0%E5%85%BB.html",
+  "image": "https://avatars.githubusercontent.com/u/87926896?s=96&v=4",
+  "datePublished": "2025-12-23T09:00:00.000Z",
+  "dateModified": "2025-12-23T10:33:14.501Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "YangLuoNou",
+      "url": "https://yingluonou.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/%E7%AC%AC%E9%9B%B6%E7%AB%A0%20Windows%20%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E7%B4%A0%E5%85%BB.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1B0C09')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第零章 Windows 使用与开发基本素养',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/normal.css"><link rel="stylesheet" href="/css/festival-christmas.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="web_bg" style="background-image: url(https://random-img-api.yangluonou.space/bg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/img/terminal.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">YangLuoNou's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">第零章 Windows 使用与开发基本素养</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第零章 Windows 使用与开发基本素养</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-23T09:00:00.000Z" title="发表于 2025-12-23 17:00:00">2025-12-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-23T10:33:14.501Z" title="更新于 2025-12-23 18:33:14">2025-12-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="前言"><a class="header-anchor" href="#前言">#</a>前言</h2>
+<p>进入实验室，你要认识到：以前你用电脑可能是为了消费内容（看视频、打游戏、写文档），而现在你用电脑是为了创造工具。你需要<strong>掌握它</strong>，而不是被它糊弄。如果电脑基本技能都掌握不好，后期在你需要大量使用电脑时（特别是我们飞控方向）可能会遇到各种“灵异事项”，也会导致与队友交流不畅，引发各种问题。因此有必要使用一个章节介绍基础的电脑知识与开发素养。<br>
+鉴于大家前期基础掌握并不一致，此文可能会对你已知的知识来说没有提高，如果你认为自己对电脑已掌握透彻，可以选择跳过本章节，但我还是建议<strong>至少通读一遍</strong>看看有没有遗漏。</p>
+<h2 id="第一节-电脑环境清理"><a class="header-anchor" href="#第一节-电脑环境清理">#</a>第一节 电脑环境清理</h2>
+<p>是的，你没有听错，这一节我们要对你的电脑环境进行“大扫除”，因为我发现很多同学（<s>甚至实验室的同学</s>）的电脑环境堪忧，开机弹出一堆广告，右键菜单一堆无用的流氓软件，解压要vip，看图要vip，训练模型电脑风扇呼呼转，一看任务栏一堆流氓软件在后台抢资源。因此强烈建议如果你的电脑有如上情况，请务必跟着本节对电脑进行全面的清理。</p>
+<blockquote>
+<p><strong>要记住一点，电脑不像手机，电脑完全属于你，你想让它变成什么样它就可以成为什么样子，请不要一听好麻烦而屈服于这些流氓收费软件，如果这都嫌麻烦，可能实验室并不适合你</strong>。</p>
+</blockquote>
+<h3 id="1-1卸载软件"><a class="header-anchor" href="#1-1卸载软件">#</a>1.1卸载软件</h3>
+<p>电脑卸载软件的正确步骤是：</p>
+<ol>
+<li>点击<img src="img/Pasted_image_20251222144041.png" alt="Pasted_image_20251222144041.png">开始菜单 ，打开<img src="img/Pasted_image_20251222144158.png" alt="Pasted_image_20251222144158.png">设置</li>
+<li>找到<img src="img/Pasted_image_20251222144303.png" alt="Pasted_image_20251222144303.png">应用，点击<img src="img/Pasted_image_20251222144356.png" alt="Pasted_image_20251222144356.png">安装的应用</li>
+<li>此时出现的便是Windows在你电脑上找到的已安装的所有软件<img src="img/Pasted_image_20251222144517.png" alt="Pasted_image_20251222144517.png">，点击你要卸载的软件右边的三个点-卸载，请你大胆的将那些你自己没有安装过的却出现在你电脑上的一眼流氓的软件全部卸载掉吧</li>
+</ol>
+<blockquote>
+<p>注意：有些全是英文的软件可能是你电脑上的开发环境，流氓软件一般很好辨认；有些流氓软件卸载时还会有阴险的选项让你保留或者更新，一定要自仔细检查卸载步骤</p>
+</blockquote>
+<blockquote>
+<p><strong>联想电脑</strong>的同学请看过来：<br>
+联想电脑一般会自带一堆流氓软件，请一定全部卸载掉：</p>
+<ol>
+<li>联想电脑管家（放心卸载，卸载软件不可能会让你的电脑失去保修）</li>
+<li><strong>联想应用商店</strong>（一定要卸载，这就是纯纯流氓软件，什么广告自动安装软件都是它干的。你既然使用电脑了，就一定要离开应用商店这种<strong>愚蠢</strong>的安装软件方式）</li>
+<li>联想ai浏览器（edge就够了，这玩意就纯纯广告机）</li>
+<li>猎豹安全浏览器</li>
+<li>2345好压</li>
+<li>Amazon 1button app（亚马逊购物助手）</li>
+<li>PC语点（这个好像是联想自己的ai，自行选择吧…）</li>
+<li>start menu</li>
+<li>迈克菲全方位实时保护-网络安全实时防御套装</li>
+</ol>
+</blockquote>
+<h3 id="1-2-关闭Windows广告"><a class="header-anchor" href="#1-2-关闭Windows广告">#</a>1.2 关闭Windows广告</h3>
+<ul>
+<li>左下角小部件广告<br>
+<img src="img/Pasted_image_20251222150843.png" alt="Pasted_image_20251222150843.png">将这个源关掉</li>
+<li>Edge 新标签页广告<br>
+请按图示设置<img src="img/Pasted_image_20251222151004.png" alt="Pasted_image_20251222151004.png"></li>
+<li>其它类似广告你只要仔细找一定有开关可以关掉</li>
+</ul>
+<h2 id="第二节-安装软件"><a class="header-anchor" href="#第二节-安装软件">#</a>第二节 安装软件</h2>
+<p>刚刚说过在电脑使用应用商城是愚蠢的，那我们要去哪下载安装软件呢？就是官方网站，利用搜索引擎找到<strong>官方</strong>网站，一般搜索引擎都是会标注的（推荐国内使用bing，科学使用Google）。请一定认准官方网站，可以通过搜索引擎标注、观察网址、观察网站布局等方法判断是否是官方网站。<br>
+在此推荐几个完全免费无广告的常用软件</p>
+<h4 id="压缩软件"><a class="header-anchor" href="#压缩软件">#</a>压缩软件</h4>
+<ol>
+<li>bandzip （图形化做的好，虽然最近加入了广告，但可以通过下载旧版本并阻止其更新来规避广告）<br>
+链接： <a target="_blank" rel="noopener" href="https://dl.bandisoft.com/bandizip.old/BANDIZIP6-SETUP.EXE?2">https://dl.bandisoft.com/bandizip.old/BANDIZIP6-SETUP.EXE?2</a><br>
+安装时记住你的安装目录（即目标文件夹）这里便是该电脑软件本体存在的地方<br>
+<img src="img/Pasted_image_20251222152810.png" alt="Pasted_image_20251222152810.png"><br>
+安装好后点击选项-设置将<img src="img/Pasted_image_20251222153013.png" alt="Pasted_image_20251222153013.png">自动更新关闭，然后进入该软件的安装目录（如果忘记自己的安装目录的话也可以通过在桌面bandzip图标右键-更多选项-打开文件所在位置打开）<img src="img/Pasted_image_20251222153300.png" alt="Pasted_image_20251222153300.png">找到Updater这个程序删除并在这个目录下新建一个文件夹叫做Updater.exe<img src="img/Pasted_image_20251222153441.png" alt="Pasted_image_20251222153441.png">右键该文件夹属性，点击两下只读选项让其变成对勾<img src="img/Pasted_image_20251222153552.png" alt="Pasted_image_20251222153552.png">点击确定（这几步的作用是不让bandzip重新创建Updater.exe程序，这样就没有烦人的更新提醒了）</li>
+<li>7-zip （该软件图形化做的不是很好，但解压和压缩性能非常强）<br>
+链接： <a target="_blank" rel="noopener" href="https://www.7-zip.org/">7-Zip</a> 选择你的电脑平台下载并安装。使用教程请自行搜索，在此不再赘述</li>
+</ol>
+<h4 id="功能超全超轻量化的编辑器"><a class="header-anchor" href="#功能超全超轻量化的编辑器">#</a>功能超全超轻量化的编辑器</h4>
+<p>VScode，飞控的同学请务必安装并熟悉该编辑器，并习惯着使用它，后续无论是视觉还是主控，大部分的时间都在使用这个软件</p>
+<blockquote>
+<p><strong>请不要尝试在树莓派、香橙派等机载电脑上安装Pycharm等重量级IDE</strong></p>
+</blockquote>
+<p>官网链接：<a target="_blank" rel="noopener" href="https://code.visualstudio.com/">Visual Studio Code - The open source AI code editor</a><br>
+安装后可以点击齿轮按钮（设置）- plugin（扩展）搜索chinese安装中文包<img src="img/Pasted_image_20251222154445.png" alt="Pasted_image_20251222154445.png">，安装成功后记得看右下角弹窗问是否切换到中文，一定要点击是(yes)，然后重启VScode软件</p>
+<h4 id="搜索神器"><a class="header-anchor" href="#搜索神器">#</a>搜索神器</h4>
+<p>Everything 官网链接： <a target="_blank" rel="noopener" href="https://www.voidtools.com/zh-cn/">voidtools</a></p>
+<h2 id="第三节-文件与路径管理"><a class="header-anchor" href="#第三节-文件与路径管理">#</a>第三节 文件与路径管理</h2>
+<p>这是最基础但最容易“翻车”的地方。飞控涉及大量的仿真数据、代码文件和编译过程。</p>
+<ul>
+<li>文件扩展名与隐藏项目：
+<ul>
+<li>请打开“文件夹选项”开启“显示文件扩展名”和“显示隐藏文件”<br>
+点击选项<img src="img/Pasted_image_20251222155040.png" alt="Pasted_image_20251222155040.png"><img src="img/Pasted_image_20251222155144.png" alt="Pasted_image_20251222155144.png">找到<strong>隐藏文件和文件夹</strong>，点击<strong>显示隐藏的文件、文件夹和驱动器</strong><br>
+找到<strong>隐藏已知文件类型的扩展名</strong>，取消勾选</li>
+</ul>
+</li>
+<li>路径命名规范：<br>
+<strong>尽量不</strong>使用中文路径！<strong>尽量避免</strong>路径中包含空格！中文路径经常会导致一些不支持中文编码的软件乱码，带空格的路径可能会导致命令错误<br>
+例如：在命令行（Terminal/CMD/PowerShell）中，空格默认用来分隔<strong>命令</strong>和<strong>参数</strong>，此时如果有一个带空格的路径，可能就会被识别成两个参数而导致运行错误</li>
+</ul>
+<h2 id="第四节-习惯使用命令行"><a class="header-anchor" href="#第四节-习惯使用命令行">#</a>第四节 习惯使用命令行</h2>
+<p>右键开始菜单<img src="img/Pasted_image_20251222160411.png" alt="Pasted_image_20251222160411.png">，选择终端。或者使用win+R键，输入powershell。你便进入了Windows的命令行页面<img src="img/Pasted_image_20251222160634.png" alt="Pasted_image_20251222160634.png">，在图形化没有这么发达的年代，人们都是使用命令的方式操作电脑的，后面我们使用的linux系统几乎全部操作都在使用命令，所以请务必习惯使用命令。</p>
+<blockquote>
+<p>Windows早期的命令行叫做CMD，其因为非常难用，十分老旧，故我们不再使用cmd作为我们的命令行窗口</p>
+</blockquote>
+<p>下面我们进行一些常见的命令行操作：<br>
+输入 <code>ls</code> 按下回车<br>
+你看到了什么<br>
+可以看到，你当前目录下的文件全部被列出来了</p>
+<blockquote>
+<p>Windows中列出当前目录下所有文件的命令其实是 <code>dir</code> PowerShell为了适应使用习惯（Linux系统的列出当前目录下所有文件的命令才是 <code>ls</code> ），为dir加了一个别名 <code>ls</code> 因此在cmd中输入命令 <code>ls</code> 会出现 <code>'ls' 不是内部或外部命令，也不是可运行的程序或批处理文件。</code> 的提示</p>
+</blockquote>
+<p>请继续尝试以下命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cd &lt;目录&gt;</code></td>
+<td>进入某个目录</td>
+</tr>
+<tr>
+<td><code>mkdir &lt;目录名&gt;</code></td>
+<td>新建指定名称的目录</td>
+</tr>
+<tr>
+<td><code>rm &lt;名称&gt;</code></td>
+<td>删除某个文件或目录（Linux中删除目录需要添加-r参数，例如：<code>rm -r test</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>请尝试习惯使用<strong>终端</strong>运行你的python脚本<code>python xxx.py</code></li>
+</ul>
+<h2 id="第五节-认识环境变量"><a class="header-anchor" href="#第五节-认识环境变量">#</a>第五节 认识环境变量</h2>
+<p>大家在初步接触python时一定遇到过在终端中打<code>python</code>命令却提示<code>'python' 不是内部或外部命令，也不是可运行的程序或批处理文件。</code>的问题。安装python时老师一般都会要求在安装界面把<img src="img/Pasted_image_20251223151406.png" alt="Pasted_image_20251223151406.png">这个选项勾选。这里的PATH便是我们要介绍的环境变量。</p>
+<ul>
+<li>什么是 PATH：用通俗的比喻：PATH 就是系统的“通讯录”。你在命令行喊“Python”，系统得去通讯录里查 Python 住哪（软件本体位置）。没有配置 PATH，系统就找不到对应的人在哪里。</li>
+<li>如何修改 PATH：<br>
+右键此电脑，选择属性<br>
+向下滑动，找到高级系统设置并单击打开<br>
+<img src="img/Pasted_image_20251223151913.png" alt="Pasted_image_20251223151913.png">右下角找到环境变量并单击打开<br>
+这里面就存着系统的各种环境变量，其中上方用户的变量指的是多用户系统中你自己的用户变量，这些变量只对你自己有效。下方的系统变量是对整个系统有效的<br>
+找到系统变量中的Path变量名称，双击打开它，这里就是你电脑上所有已经配置的软件的环境变量了</li>
+</ul>
+<blockquote>
+<p>请试着在任意目录上创建一个新的目录，并在其内部新建一个 helloworld.bat 的脚本文件，写入<code> echo Hello World!</code> ，然后在系统环境目录的Path环境变量中添加该目录，实现在终端任何地方都输入<code>helloworld</code>命令即可以运行 helloworld.bat 这个脚本文件</p>
+</blockquote>
+<h2 id="第六节-远程连接基础"><a class="header-anchor" href="#第六节-远程连接基础">#</a>第六节 远程连接基础</h2>
+<p>在飞控学习过程中，你很快会发现一个现象——<strong>你操作的电脑，往往不是真正干活的那台电脑</strong>：例如你想对无人机的机载电脑做一些修改或者上传一些文件，而你旁边又没有现成的鼠标键盘及屏幕；或者无人机正在飞行时你想远程监看一下机载电脑的状态。这个时候，你就需要 SSH（Secure Shell）了。<br>
+简单来说，SSH 就像是“夺舍”：它允许你坐在宿舍里，通过你的笔记本键盘，直接控制其它地方的服务器或者几公里外的一台无人机，就像你就坐在它们面前一样。<br>
+目前Windows10及以上已经默认装好了SSH环境，打开终端，输入<code>ssh</code>命令出现了<code>usage: ssh ...</code>等一大串内容，那么说明你系统上的SSH已经准备好为你所用了<br>
+打开VScode-设置-扩展，搜索ssh，找到<code>Remote - SSH</code>这个插件，安装好后可以看到你的VScode左侧出现了<img src="img/Pasted_image_20251223155439.png" alt="Pasted_image_20251223155439.png">这样的按钮，这里我们以后就可以通过VScode中的ssh远程连接进行文件编辑操作了。<br>
+SSH 基本的命令格式是<code>ssh &lt;用户名&gt;@&lt;目标IP&gt;</code><br>
+这里我们只对SSH命令做一个初步的介绍，后续我们还会详细为你介绍这个你可能后面70%以上的时候都会用到的非常轻量常用且安全的工具</p>
+<h2 id="第7节-版本控制基础"><a class="header-anchor" href="#第7节-版本控制基础">#</a>第7节 版本控制基础</h2>
+<p>经过几轮实验室考核，你一定体验过这样的经历：</p>
+<ul>
+<li>昨天代码跑的好好的，今天稍微改了一下代码就跑不起来了</li>
+<li>我想回到之前测试没问题的代码，但是不记得改了哪些代码了</li>
+<li>项目文件夹里放着：<code>PID_v1.c</code>, <code>PID_v2_改.c</code>, <code>PID_最终版.c</code>, <code>PID_死也不改版.c</code><br>
+在实验室后续学习中，我们会遇到更多类似的事情，为了追求高效，拒绝这种原始的各种“最终版”文件。你需要的是 <strong>Git</strong>。</li>
+</ul>
+<h4 id="Git是什么"><a class="header-anchor" href="#Git是什么">#</a>Git是什么</h4>
+<p>不要被专业术语吓到，简单来说，Git 就是一个“时光机”。</p>
+<ul>
+<li>它能记录你每一次代码的改动（哪怕只是改了一个标点）。</li>
+<li>它能让你随时“穿越”回任何一个时间点（比如昨天下午 3 点代码还能跑通的那个时刻）。</li>
+<li>它是全人类程序员通用的语言。</li>
+</ul>
+<h4 id="安装-Git-Windows"><a class="header-anchor" href="#安装-Git-Windows">#</a>安装 Git (Windows)</h4>
+<p>前往GIt官网 <a target="_blank" rel="noopener" href="https://git-scm.com/install/windows">Git - Install for Windows</a>，找到<strong>Git for Windows/x64 Setup</strong>，点击链接下载并安装，对于初学者来说，默认选项一路next即可</p>
+<h4 id="配置自己的Git用户"><a class="header-anchor" href="#配置自己的Git用户">#</a>配置自己的Git用户</h4>
+<p>Git 安装好后，你不能直接开始用，必须先告诉它“你是谁”。否则以后你提交代码时，Git 不知道该把这笔功劳（<s>或这笔烂账</s>）记在谁头上。<br>
+打开终端，输入(请替换双引号内的内容)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;你的英文名&quot;</span> </span><br><span class="line">git config --global user.email <span class="string">&quot;你的邮箱@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p>如果一切顺利，输入<code>git config --list</code> 如果可以看到你刚刚配置的<code>user.name</code>和<code>user.email</code>信息，那么恭喜你，身份注册成功。</p>
+<h4 id="让-Git-可视化（VS-Code-插件）"><a class="header-anchor" href="#让-Git-可视化（VS-Code-插件）">#</a>让 Git 可视化（VS Code 插件）</h4>
+<p>虽然熟练后基本都是用命令行写 Git，但对于刚入门的你，我们需要一个图形界面来辅助理解。<br>
+进入VScode-设置-扩展，搜索Git Graph并安装</p>
+<h4 id="如何使用Git"><a class="header-anchor" href="#如何使用Git">#</a>如何使用Git</h4>
+<p>你可以尝试使用<a target="_blank" rel="noopener" href="https://learngitbranching.js.org/?locale=zh_CN">Learn Git Branching</a>这个网站来理解Git这个时光机的使用方法，我们后面也会单独出教程教大家如何使用Git这个神奇的工具（<s>应该不会鸽掉</s>）</p>
+<h2 id="后记"><a class="header-anchor" href="#后记">#</a>后记</h2>
+<p>这是我们第一次尝试使用文本教程的方式交给大家一些知识，这对于习惯看视频或听老师讲的同学来说可能非常不友好，但我们希望你进入实验室后可以转变学习观念，不再是被灌输式被动教育而是主动学习知识，包括后续我们学习一个新的硬件几乎都是通过查看它的文档来学习的（越往深处学，相关教程包括视频会指数级的减少）。所以为了帮助能站在顶尖的未来的你，我们大胆的尝试了这种方式，不知道各位同学阅读后的理解1感受是什么样的。是觉得晦涩难懂，还是浅显无味，请大家通过qq群或者评论的方式反馈给我们，感谢同学们的理解与支持。</p>
+<hr>
+<p>Written by YangLuoNou <a href="%5BYingLuoNou%5D(https://github.com/YingLuoNou)">Github</a> <a href="https://www.yangluonou.space">Blog</a><br>
+2025/12/23</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yingluonou.github.io">YangLuoNou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/%E7%AC%AC%E9%9B%B6%E7%AB%A0%20Windows%20%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E7%B4%A0%E5%85%BB.html">https://www.yangluonou.space/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/%E7%AC%AC%E9%9B%B6%E7%AB%A0%20Windows%20%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E7%B4%A0%E5%85%BB.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.yangluonou.space" target="_blank">YangLuoNou's Blog</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">YangLuoNou</div><div class="author-info-description">YangLuoNou的个人博客，随处学学，随便写写。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YingLuoNou"><i class="fab fa-github"></i><span>Github</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">仍在建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-%E7%94%B5%E8%84%91%E7%8E%AF%E5%A2%83%E6%B8%85%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">第一节 电脑环境清理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E5%8D%B8%E8%BD%BD%E8%BD%AF%E4%BB%B6"><span class="toc-number">2.1.</span> <span class="toc-text">1.1卸载软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%85%B3%E9%97%ADWindows%E5%B9%BF%E5%91%8A"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 关闭Windows广告</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">第二节 安装软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E8%BD%AF%E4%BB%B6"><span class="toc-number">3.1.</span> <span class="toc-text">压缩软件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E8%B6%85%E5%85%A8%E8%B6%85%E8%BD%BB%E9%87%8F%E5%8C%96%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8"><span class="toc-number">3.2.</span> <span class="toc-text">功能超全超轻量化的编辑器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E7%A5%9E%E5%99%A8"><span class="toc-number">3.3.</span> <span class="toc-text">搜索神器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%8A%82-%E6%96%87%E4%BB%B6%E4%B8%8E%E8%B7%AF%E5%BE%84%E7%AE%A1%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">第三节 文件与路径管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E8%8A%82-%E4%B9%A0%E6%83%AF%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="toc-number">5.</span> <span class="toc-text">第四节 习惯使用命令行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E8%8A%82-%E8%AE%A4%E8%AF%86%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">6.</span> <span class="toc-text">第五节 认识环境变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E8%8A%82-%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E5%9F%BA%E7%A1%80"><span class="toc-number">7.</span> <span class="toc-text">第六节 远程连接基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC7%E8%8A%82-%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%9F%BA%E7%A1%80"><span class="toc-number">8.</span> <span class="toc-text">第7节 版本控制基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Git%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">8.1.</span> <span class="toc-text">Git是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Git-Windows"><span class="toc-number">8.2.</span> <span class="toc-text">安装 Git (Windows)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84Git%E7%94%A8%E6%88%B7"><span class="toc-number">8.3.</span> <span class="toc-text">配置自己的Git用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A9-Git-%E5%8F%AF%E8%A7%86%E5%8C%96%EF%BC%88VS-Code-%E6%8F%92%E4%BB%B6%EF%BC%89"><span class="toc-number">8.4.</span> <span class="toc-text">让 Git 可视化（VS Code 插件）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Git"><span class="toc-number">8.5.</span> <span class="toc-text">如何使用Git</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">9.</span> <span class="toc-text">后记</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/35417.html" title="Bitcoin：一种代码即法律的共识交易货币">Bitcoin：一种代码即法律的共识交易货币</a><time datetime="2025-12-12T14:50:01.000Z" title="发表于 2025-12-12 22:50:01">2025-12-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/2092.html" title="配置属于自己的免费随机图库api">配置属于自己的免费随机图库api</a><time datetime="2025-11-29T14:00:00.000Z" title="发表于 2025-11-29 22:00:00">2025-11-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/16107.html" title="Hello World">Hello World</a><time datetime="2025-11-28T11:05:17.146Z" title="发表于 2025-11-28 19:05:17">2025-11-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://random-img-api.yangluonou.space/footer);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By YangLuoNou</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.2</a></span></div><div class="footer_custom_text"><a href="/link/">友情链接</a> <br> Also by YingLuoNou!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = [{"createIssueManually":true}]
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liZZVKLKnfCNv1ai',
+      clientSecret: '44090ae3c5218d9194dcf8015875e4d5c701a560',
+      repo: 'gitalk_from_blog',
+      owner: 'YingLuoNou',
+      admin: ['YingLuoNou'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'a9b7d60c70999c1a979c99b21604af66'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/gitalk-mode-switcher.js"></script><script src="/tools/pomodoro/pomodoro.js"></script><script src="/js/festival-christmas.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
