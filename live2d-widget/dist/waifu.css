@@ -60,9 +60,9 @@
 	border: 1px solid rgba(224, 186, 140, .62);
 	border-radius: 12px;
 	box-shadow: 0 3px 15px 2px rgba(191, 158, 118, .2);
-	font-size: 14px;
-	line-height: 24px;
-	margin: -30px 20px;
+	font-size: 12px;
+	line-height: 22px;
+	margin: -30px -10px;
 	min-height: 70px;
 	opacity: 0;
 	overflow: hidden;
@@ -70,7 +70,7 @@
 	position: absolute;
 	text-overflow: ellipsis;
 	transition: opacity 1s;
-	width: 250px;
+	width: 210px;
 	word-break: break-all;
 }
 
