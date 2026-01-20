@@ -1,0 +1,446 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第二章 无人机硬件基础 | YangLuoNou's Blog</title><meta name="author" content="YangLuoNou"><meta name="copyright" content="YangLuoNou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="本章的目标是 “从零打造一个能稳定飞行的平台”。 一个完整的智能无人机硬件系统也可以拆解为四个核心子系统：动力系统、飞行控制系统、定位系统、以及任务计算机（机载电脑）。 #一、基本概念 #1.什么是无人机？ 在专业领域，它通常被称为“无人机系统”（UAS），所谓的“系统”，意味着它不仅仅是一架能飞的飞机，而是一个由飞行平台、地面控制和通信链路组成的完整协同网络。 本教程将聚焦于“四旋翼无人机”，四">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二章 无人机硬件基础">
+<meta property="og:url" content="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E4%BA%8C%E7%AB%A0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.html">
+<meta property="og:site_name" content="YangLuoNou&#39;s Blog">
+<meta property="og:description" content="本章的目标是 “从零打造一个能稳定飞行的平台”。 一个完整的智能无人机硬件系统也可以拆解为四个核心子系统：动力系统、飞行控制系统、定位系统、以及任务计算机（机载电脑）。 #一、基本概念 #1.什么是无人机？ 在专业领域，它通常被称为“无人机系统”（UAS），所谓的“系统”，意味着它不仅仅是一架能飞的飞机，而是一个由飞行平台、地面控制和通信链路组成的完整协同网络。 本教程将聚焦于“四旋翼无人机”，四">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4">
+<meta property="article:published_time" content="2025-01-19T09:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-20T08:44:31.239Z">
+<meta property="article:author" content="YangLuoNou">
+<meta property="article:tag" content=" 电子, 电子技术, 网络技术, 编程, blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第二章 无人机硬件基础",
+  "url": "https://www.yangluonou.space/fly_guide/%E7%AC%AC%E4%BA%8C%E7%AB%A0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.html",
+  "image": "https://avatars.githubusercontent.com/u/87926896?s=96&v=4",
+  "datePublished": "2025-01-19T09:00:00.000Z",
+  "dateModified": "2026-01-20T08:44:31.239Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "YangLuoNou",
+      "url": "https://yingluonou.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E4%BA%8C%E7%AB%A0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1B0C09')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第二章 无人机硬件基础',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/normal.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="web_bg" style="background-image: url(https://random-img-api.yangluonou.space/bg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li><li><a class="site-page child" href="/tools/life-game/"><span> 生命游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/fly_guide/%E7%AC%AC%E9%9B%B6%E7%AB%A0/img/index.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">YangLuoNou's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">第二章 无人机硬件基础</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li><li><a class="site-page child" href="/tools/life-game/"><span> 生命游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第二章 无人机硬件基础</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-01-19T09:00:00.000Z" title="发表于 2025-01-19 17:00:00">2025-01-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-20T08:44:31.239Z" title="更新于 2026-01-20 16:44:31">2026-01-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>本章的目标是 “<strong>从零打造一个能稳定飞行的平台</strong>”。</p>
+<p>一个完整的智能无人机硬件系统也可以拆解为<strong>四个核心子系统</strong>：动力系统、飞行控制系统、定位系统、以及任务计算机（机载电脑）。</p>
+<h2 id="一、基本概念"><a class="header-anchor" href="#一、基本概念">#</a>一、基本概念</h2>
+<h3 id="1-什么是无人机？"><a class="header-anchor" href="#1-什么是无人机？">#</a>1.什么是无人机？</h3>
+<p>在专业领域，它通常被称为“无人机系统”（UAS），所谓的“系统”，意味着它不仅仅是一架能飞的飞机，而是一个由<strong>飞行平台</strong>、<strong>地面控制</strong>和<strong>通信链路</strong>组成的完整协同网络。</p>
+<p>本教程将聚焦于“四旋翼无人机”，四旋翼拥有优秀的垂直起降能力和悬停能力，是深度开发最理想的平台，并对 PX4 飞控架构进行开发。</p>
+<h3 id="2-无人机的动力系统"><a class="header-anchor" href="#2-无人机的动力系统">#</a>2.无人机的动力系统</h3>
+<p>无人机的动力系统相当于肌肉提供飞行的力量。</p>
+<p>主要包括电池、电机、桨叶、电调，对于从零开始手搓无人机，不同的硬件的选型组合会影响到四旋翼的响应速度、灵活度等等性能指标。对于电赛来说最主要考虑的就是无人机的微调能力、响应速度以及维持自稳的能力。</p>
+<p>对于选型，不是单独的去选某一个硬件然后每个都选最好的，而是要选一个合适的硬件组合。对于如何选择一个合适的动力套件，主要就是<strong>电池、电机、桨叶</strong>，这三个进行选择。</p>
+<p>当我们需要对这些动力选型时，首先需要了解的就是选型过程中这些东西的关键参数都有什么？</p>
+<ul>
+<li>电池
+<ul>
+<li>S: s代表Series（串联），比如 <code>1S:3.7V</code>，</li>
+<li>P: <strong>Parallel</strong>代表并联</li>
+<li>C: 放电倍率 (C-Rating), 放电倍率通常比较容易忽略，但是它代表电池瞬间放电的能力，是无人机电池选型中非常重要的参数，如果 C 数太低，在无人机油门非常大时会产生掉压，导致动力不足，在压降非常严重时，还可能会导致无人机的主控或机载电脑出现关机。<br>
+$$ 最大持续电流 (A) = 容量 (Ah) \times C数 $$</li>
+<li>电池类型: 一般选择 LiPo 电池，优点 C 数高，缺点能量密度较低</li>
+</ul>
+</li>
+<li>电机
+<ul>
+<li>KV: 代表电压每升高 1 伏特 ($1V$)，电机空载的转速（$RPM$）会增加多少<br>
+$$ {电机转速 (RPM)} = {KV值} \times {工作电压 (V)} $$</li>
+<li>扭矩：通常高 KV 的电机匝数少，线径粗，扭矩较低</li>
+</ul>
+</li>
+<li>桨叶
+<ul>
+<li>直径: 通常以英寸为单位，大直径桨通常配合低 KV 电机，用于需要大拉力的重型机或追求航时的机型；小直径桨配合高 KV 电机，用于追求反应速度和敏捷性的赛机</li>
+<li>螺距：螺旋桨在一种完全不滑动的固体介质中旋转一圈，理论上能够前进的距离。类似于汽车不同的挡位。
+<ul>
+<li>高螺距(相当于高速档): 桨叶倾角大，每转一圈前进距离长。适合高速飞行，但起步（低速）时负载大。</li>
+<li>低螺距(相当于低速档): 桨叶倾角小，更易旋转，加速快，低速推力稳，但最高时速受限。</li>
+</ul>
+</li>
+<li>叶片数: 通常双叶桨的效率是最高的，三页桨效率略低于双叶，但是因为推力密度更高、接触面积更大通常会让飞行更平顺。</li>
+<li>其他需要关注的参数：材质、动平衡、中心孔径</li>
+</ul>
+</li>
+<li>电调
+<ul>
+<li>四合一 vs 单体
+<ul>
+<li>四合一: 节省空间，有利于布线，但是如果某一路坏了可能整个电调都需要更换</li>
+<li>单体: 虽然布线可能会比较乱，但是单路损坏更换成本低</li>
+</ul>
+</li>
+<li>DShot vs PWM
+<ul>
+<li>DShot: 全数字信号</li>
+<li>PWM: 模拟信号，一般已经不用了</li>
+</ul>
+</li>
+<li>对于电流和电压等参数要考虑当电机满负载时最大会产生的电流进行考虑，要考虑电机参数，比如最大支持单路45A电流或者60A电流</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-无人机的控制系统架构讲解"><a class="header-anchor" href="#3-无人机的控制系统架构讲解">#</a>3.无人机的控制系统架构讲解</h3>
+<p>无人机控制系统中的核心硬件也就是飞行控制器，简称飞控，飞控内部集成部分传感器比如气压计、陀螺仪等，并且能够运行控制代码，能够将传感器融合出的<strong>当前状态</strong>，与遥控器或者机载电脑输入的<strong>目标状态</strong>进行对比，通过PID来计算每个电机的转速。</p>
+<h4 id="3-1-主流固件"><a class="header-anchor" href="#3-1-主流固件">#</a>3.1 主流固件</h4>
+<p>当前的主流并且开源固件有<em>PX4</em> / <em>ArduPilot</em> / <em>Betaflight</em>, 对于比赛和科研等二次开发的人来讲，PX4是最建议使用的固件，因此本篇主要以PX4的讲解和使用为主</p>
+<h4 id="3-2-PX4大致介绍"><a class="header-anchor" href="#3-2-PX4大致介绍">#</a>3.2 PX4大致介绍</h4>
+<p>PX4不仅仅是一个简单的飞控固件，他是一个非常完整的生态系统，涵盖了非常多的应用场景，比如各种多旋翼无人机、固定翼无人机以及地面机器人。并且代码完全开源，支持非常多的仿真工具, 例如Gazebo和SITL,</p>
+<h5 id="硬件标准：Pixhawk"><a class="header-anchor" href="#硬件标准：Pixhawk">#</a>硬件标准：Pixhawk</h5>
+<p>Pixhawk 是开源的无人机飞行控制硬件标准和平台, PX4 通常运行在符合 Pixhawk 标准的硬件上。但是pixhawk因为是开源的，所以市面上的pixhawk的硬件就非常的多，而且部分型号已经非常久远了基本被淘汰</p>
+<h5 id="地面站：QGroundControl-QGC"><a class="header-anchor" href="#地面站：QGroundControl-QGC">#</a>地面站：QGroundControl (QGC)</h5>
+<p>PX4可以支持多种地面站，但是官方推荐是 QGroundControl，并且QGroundControl也是可以二次开发的</p>
+<h5 id="通信协议：MAVLink"><a class="header-anchor" href="#通信协议：MAVLink">#</a>通信协议：MAVLink</h5>
+<p>PX4 采用 MAVLink 的通信协议，用于飞控与地面站，或者飞控与机载电脑之间通信</p>
+<h4 id="3-3-PX4接线框架"><a class="header-anchor" href="#3-3-PX4接线框架">#</a>3.3 PX4接线框架</h4>
+<p>下面这个图非常好的展示了px4的基本的接线框架</p>
+<p><img src="img/pixhawk_infographic2.jpg" alt="接线图">{width=500px}</p>
+<h2 id="二、选型方案"><a class="header-anchor" href="#二、选型方案">#</a>二、选型方案</h2>
+<p>我应该如何进行选型呢？都需要考虑哪些方面</p>
+<ol>
+<li>首先是核心需求，比如对于无人机硬件选型前，通常需要一个最开始的需求分析，通常需要考虑的方面有<strong>总重</strong>、<strong>续航</strong>、<strong>轴距</strong></li>
+<li>机架选择一般是碳纤维板，硬度高重量轻，初期可用F450这种塑料来学习（炸机成本低）</li>
+<li>对于动力选型这一部分比较重要，通常需要遵循原则：大桨配低 KV，小桨配高 KV。 此外需要关注推重比，一般要求推重比大于2，但是也不能太大<br>
+$$ 推重比 = \frac{总推力}{总重量} $$<br>
+示例：F450 机架 + 2212 920KV 电机 + 20A/30A 电调 + 9450 桨叶 + 3S/4S 电池。</li>
+<li>飞控系统选择，一般选择 Pixhawk 系列</li>
+<li>供电系统，除了LiPo电池需要考虑外，由于普通电调或者飞控自带的5V BEC通常电流比较小，因此需要单独购买大功率的BEC专门给机载电脑供电。</li>
+</ol>
+<h2 id="三、快速上手"><a class="header-anchor" href="#三、快速上手">#</a>三、快速上手</h2>
+<p>首先请先阅读PX4的官网中关于PX4关于多旋翼的信息，以及如何接线</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://docs.px4.io/v1.16/zh/frames_multicopter/</span><br></pre></td></tr></table></figure>
+<p>对硬件进行组装，飞控注意前后，其他的零件位置不重要，重心要尽量处于中间</p>
+<p><img src="img/fc_orientation_1.png" alt="方向">{width=550px}</p>
+<p>组装完成确保硬件接线正确，烧录PX4的固件，首先在室内拆掉螺旋桨进行基础配置，最后再去室外 GPS 定位条件下进行测试。</p>
+<h3 id="1-电机转向测试与电调校准"><a class="header-anchor" href="#1-电机转向测试与电调校准">#</a>1.电机转向测试与电调校准</h3>
+<h3 id="2-飞控陀螺仪等传感器校准"><a class="header-anchor" href="#2-飞控陀螺仪等传感器校准">#</a>2.飞控陀螺仪等传感器校准</h3>
+<h3 id="3-遥控器配对与校准"><a class="header-anchor" href="#3-遥控器配对与校准">#</a>3.遥控器配对与校准</h3>
+<h3 id="4-飞行模式设置"><a class="header-anchor" href="#4-飞行模式设置">#</a>4.飞行模式设置</h3>
+<h3 id="5-失控保护配置"><a class="header-anchor" href="#5-失控保护配置">#</a>5.失控保护配置</h3>
+<h3 id="6-电源设置"><a class="header-anchor" href="#6-电源设置">#</a>6.电源设置</h3>
+<p>防止电池过放炸机，校准电压/电流计，确保地面站显示的电压和万用表测的一致。</p>
+<h3 id="7-室外测试"><a class="header-anchor" href="#7-室外测试">#</a>7.室外测试</h3>
+<p>了解基本的无人机操作，以安全第一</p>
+<p>position 定点模式</p>
+<p><img src="img/position_mc.DC-hD8a2.png" alt="position">{width=600px}</p>
+<p>altitude 定高模式</p>
+<p><img src="img/altitude_mc.0b-bzlDZ.png" alt="altitude">{width=600px}</p>
+<h2 id="四、任务"><a class="header-anchor" href="#四、任务">#</a>四、任务</h2>
+<blockquote>
+<p>任务1：参考文章，选择一套F450的合适的动力方案，写成如下表格形式的excel表格</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>无人机部位</th>
+<th>型号</th>
+<th>商品截图</th>
+<th>价格</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>飞控</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>无刷电机</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>任务2：利用文中的公式进行可行性验算，简写理由列</p>
+<p>任务3：下载并安装 QGroundControl 地面站，熟悉基本界面。<br>
+链接<a target="_blank" rel="noopener" href="https://github.com/mavlink/qgroundcontrol/releases">Releases · mavlink/qgroundcontrol</a>，请下载安装V4.4.2版本</p>
+</blockquote>
+<hr>
+<p>Written by WSHSM <a href="%5BLuminovaBeta%5D(https://github.com/LuminovaBeta)">Github</a> <a target="_blank" rel="noopener" href="http://8.141.125.130:22222/">Blog</a><br>
+2025/12/23</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yingluonou.github.io">YangLuoNou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.yangluonou.space/fly_guide/%E7%AC%AC%E4%BA%8C%E7%AB%A0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.html">https://www.yangluonou.space/fly_guide/%E7%AC%AC%E4%BA%8C%E7%AB%A0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.yangluonou.space" target="_blank">YangLuoNou's Blog</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">YangLuoNou</div><div class="author-info-description">YangLuoNou的个人博客，随处学学，随便写写。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YingLuoNou"><i class="fab fa-github"></i><span>Github</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">仍在建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">一、基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E4%BA%BA%E6%9C%BA%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1.什么是无人机？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9A%84%E5%8A%A8%E5%8A%9B%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2.无人机的动力系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9A%84%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%B2%E8%A7%A3"><span class="toc-number">1.3.</span> <span class="toc-text">3.无人机的控制系统架构讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-%E4%B8%BB%E6%B5%81%E5%9B%BA%E4%BB%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 主流固件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-PX4%E5%A4%A7%E8%87%B4%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 PX4大致介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E6%A0%87%E5%87%86%EF%BC%9APixhawk"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">硬件标准：Pixhawk</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%B0%E9%9D%A2%E7%AB%99%EF%BC%9AQGroundControl-QGC"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">地面站：QGroundControl (QGC)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE%EF%BC%9AMAVLink"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">通信协议：MAVLink</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-PX4%E6%8E%A5%E7%BA%BF%E6%A1%86%E6%9E%B6"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 PX4接线框架</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%80%89%E5%9E%8B%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">二、选型方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B"><span class="toc-number">3.</span> <span class="toc-text">三、快速上手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%94%B5%E6%9C%BA%E8%BD%AC%E5%90%91%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%94%B5%E8%B0%83%E6%A0%A1%E5%87%86"><span class="toc-number">3.1.</span> <span class="toc-text">1.电机转向测试与电调校准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A3%9E%E6%8E%A7%E9%99%80%E8%9E%BA%E4%BB%AA%E7%AD%89%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%A1%E5%87%86"><span class="toc-number">3.2.</span> <span class="toc-text">2.飞控陀螺仪等传感器校准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%81%A5%E6%8E%A7%E5%99%A8%E9%85%8D%E5%AF%B9%E4%B8%8E%E6%A0%A1%E5%87%86"><span class="toc-number">3.3.</span> <span class="toc-text">3.遥控器配对与校准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%A3%9E%E8%A1%8C%E6%A8%A1%E5%BC%8F%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.4.</span> <span class="toc-text">4.飞行模式设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%B1%E6%8E%A7%E4%BF%9D%E6%8A%A4%E9%85%8D%E7%BD%AE"><span class="toc-number">3.5.</span> <span class="toc-text">5.失控保护配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%94%B5%E6%BA%90%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.6.</span> <span class="toc-text">6.电源设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%AE%A4%E5%A4%96%E6%B5%8B%E8%AF%95"><span class="toc-number">3.7.</span> <span class="toc-text">7.室外测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%BB%E5%8A%A1"><span class="toc-number">4.</span> <span class="toc-text">四、任务</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/35417.html" title="Bitcoin：一种代码即法律的共识交易货币">Bitcoin：一种代码即法律的共识交易货币</a><time datetime="2025-12-12T14:50:01.000Z" title="发表于 2025-12-12 22:50:01">2025-12-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/2092.html" title="配置属于自己的免费随机图库api">配置属于自己的免费随机图库api</a><time datetime="2025-11-29T14:00:00.000Z" title="发表于 2025-11-29 22:00:00">2025-11-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/16107.html" title="Hello World">Hello World</a><time datetime="2025-11-28T11:05:17.146Z" title="发表于 2025-11-28 19:05:17">2025-11-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://random-img-api.yangluonou.space/footer);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By YangLuoNou</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.2</a></span></div><div class="footer_custom_text"><a href="/link/">友情链接</a> <br> Also by YingLuoNou!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = [{"createIssueManually":true}]
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liZZVKLKnfCNv1ai',
+      clientSecret: '44090ae3c5218d9194dcf8015875e4d5c701a560',
+      repo: 'gitalk_from_blog',
+      owner: 'YingLuoNou',
+      admin: ['YingLuoNou'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '6c433f16d9bb249453c9a8b80ffeaba1'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/gitalk-mode-switcher.js"></script><script src="/tools/pomodoro/pomodoro.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
