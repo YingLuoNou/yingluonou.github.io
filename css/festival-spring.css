@@ -1,0 +1,16 @@
+/* 春节主题开关 */
+html.spring-on #spring-header-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* 保证在背景图之上，但在文字之下(如果有文字需要交互可调整) */
+    pointer-events: none; /* 让鼠标事件穿透，不影响导航栏点击 */
+}
+
+5
+
+/* 如果希望点击能触发烟花，需要把 pointer-events 设为 auto，
+   但这可能会阻挡顶图上原来的按钮点击。
+   建议保留 none，点击交互通过监听父元素实现。 */
