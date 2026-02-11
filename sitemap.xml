@@ -146,28 +146,21 @@
 
   
   <url>
-    <loc>https://www.yangluonou.space/tags/api/</loc>
+    <loc>https://www.yangluonou.space/tags/%E6%B5%81%E6%B0%93%E8%BD%AF%E4%BB%B6/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.yangluonou.space/tags/%E5%9B%BE%E5%BA%93/</loc>
+    <loc>https://www.yangluonou.space/tags/%E5%8D%B8%E8%BD%BD/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.yangluonou.space/tags/%E9%9A%8F%E6%9C%BA%E5%9B%BE%E5%BA%93/</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.yangluonou.space/tags/%E5%85%8D%E8%B4%B9/</loc>
+    <loc>https://www.yangluonou.space/tags/%E6%8D%86%E7%BB%91%E8%BD%AF%E4%BB%B6/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -202,47 +195,33 @@
   </url>
   
   <url>
-    <loc>https://www.yangluonou.space/tags/%E6%B5%81%E6%B0%93%E8%BD%AF%E4%BB%B6/</loc>
+    <loc>https://www.yangluonou.space/tags/api/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.yangluonou.space/tags/%E5%8D%B8%E8%BD%BD/</loc>
+    <loc>https://www.yangluonou.space/tags/%E5%9B%BE%E5%BA%93/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.yangluonou.space/tags/%E6%8D%86%E7%BB%91%E8%BD%AF%E4%BB%B6/</loc>
+    <loc>https://www.yangluonou.space/tags/%E9%9A%8F%E6%9C%BA%E5%9B%BE%E5%BA%93/</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.yangluonou.space/tags/%E5%85%8D%E8%B4%B9/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
 
-  
-  <url>
-    <loc>https://www.yangluonou.space/categories/%E5%8D%9A%E5%AE%A2%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.yangluonou.space/categories/%E6%8A%80%E6%9C%AF%E5%BA%94%E7%94%A8/</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.yangluonou.space/categories/%E7%94%B5%E8%84%91%E6%8A%80%E5%B7%A7/</loc>
-    <lastmod>2026-02-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
   
 </urlset>
