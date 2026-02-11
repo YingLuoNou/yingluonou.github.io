@@ -401,6 +401,7 @@
   }
 
   function startSpringEffect() {
+    initScrollHorse();
     stopSpringEffect();
     addfooter();
     if (!isSpring) return;
@@ -456,3 +457,53 @@
   document.addEventListener('pjax:complete', () => { initSpringButton(); if(isSpring) startSpringEffect(); });
 
 })();
+
+// ================= 底部触发金色粒子马 =================
+  function initScrollHorse() {
+      const footer = document.getElementById('footer');
+      if (!footer || document.getElementById('golden-horse-container')) return;
+
+      // 1. 创建结构
+      const container = document.createElement('div');
+      container.id = 'golden-horse-container';
+      
+      const horse = document.createElement('div');
+      horse.id = 'golden-horse-run';
+      
+      container.appendChild(horse);
+      footer.appendChild(container);
+
+      // 2. 状态标记
+      let hasRun = false; // 确保每次刷新页面只跑一次，或者每次到底部都跑？(这里设为每次进入都跑)
+
+      // 3. 使用 IntersectionObserver 监听 Footer 是否可见
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              // 当 Footer 进入视口比例超过 10% 时触发
+              if (entry.isIntersecting) {
+                  if (!hasRun) {
+                      runAnimation();
+                  }
+              }
+          });
+      }, { threshold: 0.1 });
+
+      observer.observe(footer);
+
+      function runAnimation() {
+          hasRun = true;
+          horse.classList.remove('horse-running');
+          
+          // 强制重绘，允许动画重启
+          void horse.offsetWidth; 
+          
+          horse.classList.add('horse-running');
+
+          // 动画结束后重置状态 (6秒后)
+          setTimeout(() => {
+              horse.classList.remove('horse-running');
+              // 如果你希望读者滑上去再滑下来还能再看一次，把下面这行解开：
+              // hasRun = false; 
+          }, 6000); // 时间要和 CSS 里的 duration 匹配
+      }
+  }

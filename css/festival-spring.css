@@ -8,9 +8,364 @@ html.spring-on #spring-header-canvas {
     z-index: 0; /* 保证在背景图之上，但在文字之下(如果有文字需要交互可调整) */
     pointer-events: none; /* 让鼠标事件穿透，不影响导航栏点击 */
 }
+@keyframes shake-once {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(15deg); }  /* 向右摆 */
+  40% { transform: rotate(-10deg); } /* 向左摆 */
+  60% { transform: rotate(5deg); }   /* 微微回摆 */
+  80% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }  /* 归位 */
+}
 
-5
+/* 2. 调整标题容器，给图片腾出位置 */
+html.spring-on #post-info {
+    padding-left: 40px !important; 
+    position: relative;
+}
 
-/* 如果希望点击能触发烟花，需要把 pointer-events 设为 auto，
-   但这可能会阻挡顶图上原来的按钮点击。
-   建议保留 none，点击交互通过监听父元素实现。 */
+/* 2. 标题本身不需要 margin 了，因为父容器已经撑开了 */
+html.spring-on #post-info .post-title {
+    position: relative;
+    /* display: inline-block; */
+    overflow: visible !important;
+    vertical-align: middle;
+}
+
+/* 3. 图片定位调整 */
+html.spring-on #post-info .post-title::before {
+    content: "";
+    position: absolute;
+    
+    /* 垂直位置：微调 */
+    top: 10px;       
+    
+    /* 水平位置：向左偏移 55px，刚好落在父容器的 padding-left 区域内 */
+    left: -30px;     
+    
+    /* 大小 */
+    width: 48px;     
+    height: 48px;    
+    
+    background-image: url("/img/theme_spring/2.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center top; /* 确保挂绳在顶部 */
+    
+    pointer-events: none;
+    z-index: 10;
+    
+    transform-origin: 50% 0; /* 旋转轴心设为顶部中心 */
+    transition: transform 0.3s ease;
+}
+
+html.spring-on #post-info .post-title:hover::before {
+    animation: shake-once 1s ease-in-out 1;
+}
+
+@media screen and (max-width: 768px) {
+    
+    /* 1. 清除左边距，改为增加上边距，防止图片挡住文字 */
+    html.spring-on #post-info {
+        padding-left: 0 !important;   /* 取消左边占位 */
+        padding-top: 50px !important; /* 顶部腾出空间放灯笼 */
+    }
+
+    /* 2. 将图片移动到标题正上方 */
+    html.spring-on #post-info .post-title::before {
+        top: -45px;         /* 移到文字上方 */
+        
+        /* 水平居中技巧 */
+        left: 50px;          /* 定位到标题宽度的 50% 处 */
+        margin-left: -24px; /* 向左回退图片宽度的一半 (48px / 2)，实现完美居中 */
+    }
+}
+
+@keyframes bounce-thrice {
+    0%, 100% { transform: translateY(0); }
+    10% { transform: translateY(5px); }
+    20% { transform: translateY(-5px); }
+    30% { transform: translateY(3px); }
+    40% { transform: translateY(-3px); }
+    50% { transform: translateY(1px); }
+    60% { transform: translateY(0); }
+    70%, 90% { transform: translateY(0); }
+}
+
+/* 3. 文章标题装饰 */
+html.spring-on .article-title:hover::before{
+    animation: bounce-thrice 1.2s ease-in-out 1;
+}
+html.spring-on .article-title{
+    position: relative;
+    padding-left:36px;
+    overflow: visible;
+}
+html.spring-on .article-title::before{
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 1px;
+    width: 32px;
+    height: 32px;
+    background-image: url("/img/theme_spring/5.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index:100;
+    transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* 5. 导航栏中国结 */
+/* 1. 定义摇摆动画 */
+@keyframes knot-wave {
+    0% { 
+        /* 向左摆时，底部向右滞后(skew正值)，模拟弯曲 */
+        transform: rotate(-6deg) skew(4deg); 
+    }
+    50% { 
+        /* 向右摆时，底部向左滞后(skew负值) */
+        transform: rotate(6deg) skew(-4deg); 
+    }
+    100% { 
+        transform: rotate(-6deg) skew(4deg); 
+    }
+}
+
+/* 2. 导航栏容器设置 */
+html.spring-on #nav {
+    padding-left: 45px !important;
+    position: relative;
+}
+
+/* 3. 中国结样式 */
+html.spring-on #nav::before {
+    content: "";
+    position: absolute;
+    
+    /* 位置 */
+    top: -2px;
+    left: 6px;
+    
+    /* 大小 */
+    width: 64px;
+    height: 64px;
+    
+    /* 图片资源 */
+    background-image: url("/img/theme_spring/9.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    pointer-events: none;
+    z-index: 100;
+    
+    /* 核心设置：支点在顶部中间 */
+    transform-origin: 50% 0;
+    
+    /* 3.5秒完成一次往返，看起来更像微风 */
+    animation: knot-wave 3.5s ease-in-out infinite;
+}
+
+
+/* =========================================
+   春节限定：文章卡片底部鞭炮贴纸
+   ========================================= */
+
+/* 1. 卡片基准定位 */
+html.spring-on .recent-post-item {
+    position: relative; /* 确保贴纸相对于卡片定位 */
+}
+
+/* 2. 鞭炮通用样式 (左右共有) */
+html.spring-on .recent-post-item::before,
+html.spring-on .recent-post-item::after {
+    content: "";
+    position: absolute;
+    
+    /* 位置：置于底部 */
+    bottom: 5px;   
+    
+    /* 大小：根据你的鞭炮图片长宽比调整 */
+    width: 30px;    
+    height: 60px;   
+    
+    /* 图片资源：假设图片名为 7.png (鞭炮) */
+    background-image: url("/img/theme_spring/6.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    
+    /* 关键属性：不挡鼠标点击，且层级较低 */
+    pointer-events: none; 
+    z-index: 1; 
+    opacity: 0.9; /* 稍微一点透明感，融合更好 */
+}
+
+/* 3. 左侧鞭炮 */
+html.spring-on .recent-post-item::before {
+    left: 8px; /* 距离左边缘 */
+    transform: rotate(-20deg); /* 稍微向内歪一点，像贴上去的 */
+}
+
+/* 4. 右侧鞭炮 */
+html.spring-on .recent-post-item::after {
+    top: 0;
+    right: 8px; /* 距离右边缘 */
+    transform: scaleX(-1) rotate(30deg); /* 镜像翻转，形成对称 */
+}
+
+/* info 灯笼*/
+
+@keyframes knot-wave2 {
+    0% { 
+        /* 向左摆时，底部向右滞后(skew正值)，模拟弯曲 */
+        transform: rotate(-6deg) skew(2deg); 
+    }
+    50% { 
+        /* 向右摆时，底部向左滞后(skew负值) */
+        transform: rotate(6deg) skew(-2deg); 
+    }
+    100% { 
+        transform: rotate(-6deg) skew(2deg); 
+    }
+}
+
+html.spring-on .card-info::before,
+html.spring-on .card-info::after  
+{
+    content: "";
+    position: absolute;
+    top: 10px;
+    width: 64px;
+    height: 64px;
+    background-image: url("/img/theme_spring/1.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 100;
+
+    transform-origin: 50% 0;
+
+    animation: knot-wave2 4.0s ease-in-out infinite;
+}
+
+
+html.spring-on .card-info::before {
+    left: 10px;
+    transform: rotate(-deg); /* 稍微向内歪一点，像贴上去的 */
+}
+
+
+html.spring-on .card-info::after {
+    right: -10px; /* 距离右边缘 */
+    transform: scaleX(-1) rotate(30deg); /* 镜像翻转，形成对称 */
+}
+
+/* 1. 统一设置 H1 - H6 的样式 */
+/* 注意：Butterfly 主题的文章内容都在 #article-container 下 */
+html.spring-on #article-container h1,
+html.spring-on #article-container h2,
+html.spring-on #article-container h3,
+html.spring-on #article-container h4,
+html.spring-on #article-container h5,
+html.spring-on #article-container h6 {
+    position: relative;
+    padding-left: 35px; /* 给图标腾出左侧空间，防止文字重叠 */
+}
+
+/* 2. 添加图标 (使用伪元素) */
+html.spring-on #article-container h1::before,
+html.spring-on #article-container h2::before,
+html.spring-on #article-container h3::before,
+html.spring-on #article-container h4::before,
+html.spring-on #article-container h5::before,
+html.spring-on #article-container h6::before {
+    content: "";
+    position: absolute;
+    
+    /* 位置微调：根据你的字体大小调整 top 值，使其垂直居中 */
+    left: 0;
+    top: 0.5em; 
+    
+    /* 图标大小 */
+    width: 42px;
+    height: 42px;
+    
+    /* 替换为你的图标路径，建议用 8.png */
+    background-image: url("/img/theme_spring/7.png"); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* 稍微加一点旋转，显得活泼 */
+    transform: rotate(-10deg);
+}
+
+/* 3. (可选) 鼠标悬停时图标转圈圈 */
+html.spring-on #article-container h1:hover::before,
+html.spring-on #article-container h2:hover::before,
+html.spring-on #article-container h3:hover::before {
+    transition: transform 0.5s ease;
+    transform: rotate(350deg);
+}
+
+
+/* footer 马 */
+/* 1. 容器：铺在 Footer 上，不挡点击 */
+#golden-horse-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* 覆盖整个 Footer 区域 */
+    pointer-events: none; /* 让点击穿透，不影响 Footer 链接 */
+    z-index: 1; 
+    overflow: hidden; /* 防止马跑出屏幕出现滚动条 */
+}
+
+/* 2. 马的本体 */
+#golden-horse-run {
+    position: absolute;
+    bottom: 10px; /* 距离底部的距离 */
+    left: -300px; /* 初始位置在屏幕左侧外 */
+    
+    width: 150px; /* 根据图片调整大小 */
+    height: 100px;
+    
+    /* 替换你的粒子马图片 */
+    background-image: url('/img/theme_spring/horse.gif'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* [核心魔法] 混合模式：滤掉黑色背景，只留金色粒子，并产生发光感 */
+    mix-blend-mode: screen; 
+    /* 如果图片不够金，可以用滤镜调整 */
+    /* filter: drop-shadow(0 0 10px gold) brightness(1.2); */
+    filter: sepia(100%) saturate(1000%) hue-rotate(0deg);
+    
+    opacity: 0; /* 默认隐藏，触发后显示 */
+}
+
+/* 3. 奔跑动画类 (由 JS 添加) */
+.horse-running {
+    opacity: 1 !important;
+    animation: run-across-screen 4s linear forwards;
+}
+
+/* 4. 定义动画轨迹 */
+@keyframes run-across-screen {
+    0% {
+        left: -300px;
+        opacity: 0;
+    }
+    10% {
+        opacity: 1; /* 跑进来时渐显 */
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%; /* 跑到屏幕最右侧外 */
+        opacity: 0;
+    }
+}
+
+
