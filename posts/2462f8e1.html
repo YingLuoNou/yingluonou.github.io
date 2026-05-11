@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战 | YangLuoNou's Blog</title><meta name="author" content="YangLuoNou"><meta name="copyright" content="YangLuoNou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="依次简单的软件逆向实录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战">
+<meta property="og:url" content="https://www.yangluonou.space/posts/2462f8e1.html">
+<meta property="og:site_name" content="YangLuoNou&#39;s Blog">
+<meta property="og:description" content="依次简单的软件逆向实录">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4">
+<meta property="article:published_time" content="2026-03-17T12:10:00.000Z">
+<meta property="article:modified_time" content="2026-05-11T12:01:55.250Z">
+<meta property="article:author" content="YangLuoNou">
+<meta property="article:tag" content="汇编">
+<meta property="article:tag" content="破解">
+<meta property="article:tag" content="软件逆向">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://avatars.githubusercontent.com/u/87926896?s=96&v=4"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战",
+  "url": "https://www.yangluonou.space/posts/2462f8e1.html",
+  "image": "https://avatars.githubusercontent.com/u/87926896?s=96&v=4",
+  "datePublished": "2026-03-17T12:10:00.000Z",
+  "dateModified": "2026-05-11T12:01:55.250Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "YangLuoNou",
+      "url": "https://yingluonou.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://www.yangluonou.space/posts/2462f8e1.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1B0C09')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/normal.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="web_bg" style="background-image: url(https://random-img-api.yangluonou.space/bg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li><li><a class="site-page child" href="/tools/life-game/"><span> 生命游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/Bitcoin/image.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">YangLuoNou's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/fly_guide/"><i class="fa-fw fas fa-book"></i><span> 飞控教程</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-folder-open"></i><span> 工具</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/tools/pomodoro/"><span> 🍅番茄钟beta</span></a></li><li><a class="site-page child" href="/tools/life-game/"><span> 生命游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-17T12:10:00.000Z" title="发表于 2026-03-17 20:10:00">2026-03-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-11T12:01:55.250Z" title="更新于 2026-05-11 20:01:55">2026-05-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0%E5%AE%9E%E6%88%98%E6%97%A5%E5%BF%97/">学习实战日志</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="前言"><a class="header-anchor" href="#前言">#</a>前言</h2>
+<p><strong>以下内容仅供动态分析学习交流</strong><br>
+小学习了一下软件动态分析技术，迫不及待拿了一个简单的取模软件进行分析<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312214300.webp" alt="Pasted_image_20260312214300.webp"><br>
+这是一个比较经典的生成C语言数组的取模软件，在嵌入式开发时很常用，但是这个软件太老了，网上也有很多可以使用的注册码能搜到，这个软件大概是在0几年时发布的，当时大多数注册码保护的软件基本都是这种离线校验注册码的逻辑。接下来就准备使用OllyDbg对它进行逆向分析，争取做出来一个去掉注册码的“爆破版”即去掉注册码验证环节和写出一个注册机，生成可以使用的注册码</p>
+<h2 id="断点分析"><a class="header-anchor" href="#断点分析">#</a>断点分析</h2>
+<p>首先，先要找到注册码的验证汇编位置，窗口上有5个文本窗口+一个注册按钮，首先进入OllyDbg的Windows窗口，刷新并找到注册按钮，设置一个注册按钮松开消息断点（202 WM_LBUTTONUP）<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312223041.webp" alt="Pasted_image_20260312223041.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312223058.webp" alt="Pasted_image_20260312223058.webp"><br>
+随便填入注册码并点击注册<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312223229.webp" alt="Pasted_image_20260312223229.webp"><br>
+可以看到此时断点断在了Windows处理按钮松开的事件位置，接下来我们要返回到程序领空，因此我们在内存中主程序的.text区块中添加断点<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312223558.webp" alt="Pasted_image_20260312223558.webp"></p>
+<h2 id="程序跟踪"><a class="header-anchor" href="#程序跟踪">#</a>程序跟踪</h2>
+<p>来到了此处，经过分析，可以看到<code>0030CCED CMP EAX,111</code>其中的 <code>0x111</code>是 Windows 消息 <strong><code>WM_COMMAND</code></strong> 的十六进制代码，即检查返回的消息是否是“命令”（按钮点击）因此继续设置断点并跟随下一句<code>JE Img2Lcd.0040CE1C</code> 进行跳转<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260312224743.webp" alt="Pasted_image_20260312224743.webp">观察此处代码，根据ai辅助判断，可以分析出</p>
+<ol>
+<li><strong><code>AND EDX, 0FFFF</code></strong> (地址 <code>0040CE22</code>)：
+<ul>
+<li>这是在提取 <strong>控件ID (Control ID)</strong>。</li>
+<li>当按钮被点击时，系统会发送一个 ID 过来。这段代码把这个 ID 拿出来放在 <code>EDX</code> 里。</li>
+</ul>
+</li>
+<li><strong><code>JMP DWORD PTR DS:[EDX*4+40D0C8]</code></strong> (地址 <code>0040CE3F</code>)：
+<ul>
+<li><strong>关键点在这里！</strong> 这是一个 <strong>Switch 跳转表</strong>。</li>
+<li>程序根据按钮的 ID (<code>EDX</code>)，计算出一个地址，然后直接跳过去。</li>
+<li><strong>不同的按钮 ID 会跳去不同的代码段</strong>。其中某一个跳转目标，就是“注册”按钮的处理函数。</li>
+</ul>
+</li>
+</ol>
+<p>因此继续追踪<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260313104854.webp" alt="Pasted_image_20260313104854.webp"><br>
+按F8继续追踪，发现程序在<code>0040CEF3</code> - <code>0040CF1E</code>之间循环读取了我们输入的5组注册码<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315183300.webp" alt="Pasted_image_20260315183300.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315183545.webp" alt="Pasted_image_20260315183545.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315183608.webp" alt="Pasted_image_20260315183608.webp">观察EBX寄存器就会发现填入的注册数字被分别读取出来后在<code>0040CC10</code>处将十六进制的字符串（Hex String）转换为对应的 32 位整数（Integer）</p>
+<h2 id="程序爆破"><a class="header-anchor" href="#程序爆破">#</a>程序爆破</h2>
+<p>程序爆破的原理是将程序的验证逻辑直接跳过，让其一直处于验证通过状态<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260317175952.webp" alt="Pasted_image_20260317175952.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315183912.webp" alt="Pasted_image_20260315183912.webp">继续追踪程序<br>
+可以看到<code>0040CF44</code>处程序调用了一个叫sss运行库内的函数<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315184418.webp" alt="Pasted_image_20260315184418.webp">接着往下面读，很快就能看到紧跟着一个<code>CMP</code>比较指令和一个<code>JNZ</code>如果不相等则跳转指令，很明显<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315184910.webp" alt="Pasted_image_20260315184910.webp">这几个指令就是判断输入的注册码是否正确的逻辑，我们使用F8跟踪到<code>JNZ</code>指令处，可以看到跳转会被触发<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315184811.webp" alt="Pasted_image_20260315184811.webp">为了证实猜想，双击<code>Z (ZF - Zero Flag)</code>零标志位将其从<code>0</code>置为<code>1</code>，以手动阻止<code>JNZ</code>指令触发跳转，接下来按下F9让程序正常运行，可以看到，注册成功的提示出现<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260313105542.webp" alt="Pasted_image_20260313105542.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260317194722.webp" alt="Pasted_image_20260317194722.webp">此时我们就找到了一个程序的爆破点，制作爆破注册机制的程序思路就很简单了，只需将JNZ这行命令使用<code>nop</code>（什么也不做）命令替换即可<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315185941.webp" alt="Pasted_image_20260315185941.webp"><br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315190001.webp" alt="Pasted_image_20260315190001.webp">接下来选中修改的代码，右键菜单执行<code>Copy to executable</code>-<code>Selection</code>后在打开的文件编辑窗口右键选择<code>Save File</code>导出程序，这样我们就成功获得了一个不管输入什么注册码均可注册成功的爆破版软件。</p>
+<h2 id="注册机编写"><a class="header-anchor" href="#注册机编写">#</a>注册机编写</h2>
+<p>在进入sss运行库之前，我们可以看到有四句命令对接下来要给到sss库的数据添加了一些小料<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315193513.webp" alt="Pasted_image_20260315193513.webp">为了编写出注册机，我们要跟进sss运行库观察代码<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260315194053.webp" alt="Pasted_image_20260315194053.webp">进入sss运行库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">10007090 &gt; 83EC 18          SUB ESP,18</span><br><span class="line">10007093   B9 06000000      MOV ECX,6</span><br><span class="line">10007098   55               PUSH EBP</span><br><span class="line">10007099   8B6C24 20        MOV EBP,DWORD PTR SS:[ESP+20]</span><br><span class="line">1000709D   56               PUSH ESI</span><br><span class="line">1000709E   57               PUSH EDI</span><br><span class="line">1000709F   8BF5             MOV ESI,EBP</span><br><span class="line">100070A1   8D7C24 0C        LEA EDI,DWORD PTR SS:[ESP+C]</span><br><span class="line">100070A5   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS&gt;</span><br><span class="line">100070A7   66:837C24 1E 00  CMP WORD PTR SS:[ESP+1E],0</span><br><span class="line">100070AD   74 18            JE SHORT sss.100070C7</span><br><span class="line">100070AF   8B4C24 0C        MOV ECX,DWORD PTR SS:[ESP+C]</span><br><span class="line">100070B3   33D2             XOR EDX,EDX</span><br><span class="line">100070B5   8BC1             MOV EAX,ECX</span><br><span class="line">100070B7   0FAF4424 1E      IMUL EAX,DWORD PTR SS:[ESP+1E]</span><br><span class="line">100070BC   8AD4             MOV DL,AH</span><br><span class="line">100070BE   8AF0             MOV DH,AL</span><br><span class="line">100070C0   03D1             ADD EDX,ECX</span><br><span class="line">100070C2   66:895424 0E     MOV WORD PTR SS:[ESP+E],DX</span><br><span class="line">100070C7   8B4424 0E        MOV EAX,DWORD PTR SS:[ESP+E]</span><br><span class="line">100070CB   8B4C24 0C        MOV ECX,DWORD PTR SS:[ESP+C]</span><br><span class="line">100070CF   25 FFFF0000      AND EAX,0FFFF</span><br><span class="line">100070D4   81E1 FFFF0000    AND ECX,0FFFF</span><br><span class="line">100070DA   03C1             ADD EAX,ECX</span><br><span class="line">100070DC   8D5424 0C        LEA EDX,DWORD PTR SS:[ESP+C]</span><br><span class="line">100070E0   894424 20        MOV DWORD PTR SS:[ESP+20],EAX</span><br><span class="line">100070E4   33C0             XOR EAX,EAX</span><br><span class="line">100070E6   8A6424 0E        MOV AH,BYTE PTR SS:[ESP+E]</span><br><span class="line">100070EA   52               PUSH EDX</span><br><span class="line">100070EB   8A4424 11        MOV AL,BYTE PTR SS:[ESP+11]</span><br><span class="line">100070EF   50               PUSH EAX</span><br><span class="line">100070F0   E8 5BFFFFFF      CALL sss.10007050</span><br><span class="line">100070F5   B9 88990000      MOV ECX,9988</span><br><span class="line">100070FA   83C4 08          ADD ESP,8</span><br><span class="line">100070FD   66:894424 10     MOV WORD PTR SS:[ESP+10],AX</span><br><span class="line">10007102   33F6             XOR ESI,ESI</span><br><span class="line">10007104   894C24 20        MOV DWORD PTR SS:[ESP+20],ECX</span><br><span class="line">10007108   8D5424 0C        LEA EDX,DWORD PTR SS:[ESP+C]</span><br><span class="line">1000710C   BF 03000000      MOV EDI,3</span><br><span class="line">10007111   66:8B02          MOV AX,WORD PTR DS:[EDX]</span><br><span class="line">10007114   83C2 02          ADD EDX,2</span><br><span class="line">10007117   03F0             ADD ESI,EAX</span><br><span class="line">10007119   25 FFFF0000      AND EAX,0FFFF</span><br><span class="line">1000711E   C1E1 10          SHL ECX,10</span><br><span class="line">10007121   03C8             ADD ECX,EAX</span><br><span class="line">10007123   4F               DEC EDI</span><br><span class="line">10007124   894C24 20        MOV DWORD PTR SS:[ESP+20],ECX</span><br><span class="line">10007128  ^75 E7            JNZ SHORT sss.10007111</span><br><span class="line">1000712A   8B5424 10        MOV EDX,DWORD PTR SS:[ESP+10]</span><br><span class="line">1000712E   8D4C24 0C        LEA ECX,DWORD PTR SS:[ESP+C]</span><br><span class="line">10007132   33D6             XOR EDX,ESI</span><br><span class="line">10007134   51               PUSH ECX</span><br><span class="line">10007135   52               PUSH EDX</span><br><span class="line">10007136   E8 15FFFFFF      CALL sss.10007050</span><br><span class="line">1000713B   66:894424 1A     MOV WORD PTR SS:[ESP+1A],AX</span><br><span class="line">10007140   8B4424 1A        MOV EAX,DWORD PTR SS:[ESP+1A]</span><br><span class="line">10007144   8D4C24 14        LEA ECX,DWORD PTR SS:[ESP+14]</span><br><span class="line">10007148   8DB406 6EE1FFFF  LEA ESI,DWORD PTR DS:[ESI+EAX-1E92]</span><br><span class="line">1000714F   51               PUSH ECX</span><br><span class="line">10007150   33C6             XOR EAX,ESI</span><br><span class="line">10007152   50               PUSH EAX</span><br><span class="line">10007153   E8 F8FEFFFF      CALL sss.10007050</span><br><span class="line">10007158   8B4C24 3C        MOV ECX,DWORD PTR SS:[ESP+3C]</span><br><span class="line">1000715C   83C4 10          ADD ESP,10</span><br><span class="line">1000715F   85C9             TEST ECX,ECX</span><br><span class="line">10007161   66:894424 14     MOV WORD PTR SS:[ESP+14],AX              ; 留意这个判断</span><br><span class="line">10007166   74 1C            JE SHORT sss.10007184                    ; 跳到判断注册码是否正确逻辑</span><br><span class="line">10007168   66:817D 0A 7205  CMP WORD PTR SS:[EBP+A],572              ; 留意这个判断2</span><br><span class="line">1000716E   75 4F            JNZ SHORT sss.100071BF                   ; 跳到直接结束逻辑</span><br><span class="line">10007170   B9 06000000      MOV ECX,6</span><br><span class="line">10007175   8D7424 0C        LEA ESI,DWORD PTR SS:[ESP+C]</span><br><span class="line">10007179   8BFD             MOV EDI,EBP</span><br><span class="line">1000717B   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS&gt;</span><br><span class="line">1000717D   5F               POP EDI</span><br><span class="line">1000717E   5E               POP ESI</span><br><span class="line">1000717F   5D               POP EBP</span><br><span class="line">10007180   83C4 18          ADD ESP,18</span><br><span class="line">10007183   C3               RETN                                     ; 结束</span><br><span class="line">10007184   66:3B45 08       CMP AX,WORD PTR SS:[EBP+8]               ; 下面是检查注册码是否正确函数</span><br><span class="line">10007188   75 2E            JNZ SHORT sss.100071B8                   ; 如果不正确跳到返回不正确的语句</span><br><span class="line">1000718A   66:8B5424 12     MOV DX,WORD PTR SS:[ESP+12]</span><br><span class="line">1000718F   66:3B55 06       CMP DX,WORD PTR SS:[EBP+6]</span><br><span class="line">10007193   75 23            JNZ SHORT sss.100071B8</span><br><span class="line">10007195   66:8B4424 10     MOV AX,WORD PTR SS:[ESP+10]</span><br><span class="line">1000719A   66:3B45 04       CMP AX,WORD PTR SS:[EBP+4]</span><br><span class="line">1000719E   75 18            JNZ SHORT sss.100071B8</span><br><span class="line">100071A0   66:8B4C24 0E     MOV CX,WORD PTR SS:[ESP+E]</span><br><span class="line">100071A5   66:3B4D 02       CMP CX,WORD PTR SS:[EBP+2]</span><br><span class="line">100071A9   75 0D            JNZ SHORT sss.100071B8</span><br><span class="line">100071AB   5F               POP EDI                                  ; 返回注册码正确</span><br><span class="line">100071AC   66:C745 0A 7205  MOV WORD PTR SS:[EBP+A],572</span><br><span class="line">100071B2   5E               POP ESI</span><br><span class="line">100071B3   5D               POP EBP</span><br><span class="line">100071B4   83C4 18          ADD ESP,18</span><br><span class="line">100071B7   C3               RETN                                     ; 结束</span><br><span class="line">100071B8   83CE 01          OR ESI,1                                 ; 返回注册码错误</span><br><span class="line">100071BB   66:8975 0A       MOV WORD PTR SS:[EBP+A],SI</span><br><span class="line">100071BF   5F               POP EDI</span><br><span class="line">100071C0   5E               POP ESI</span><br><span class="line">100071C1   5D               POP EBP</span><br><span class="line">100071C2   83C4 18          ADD ESP,18</span><br><span class="line">100071C5   C3               RETN                                     ; 结束</span><br></pre></td></tr></table></figure>
+<p>我们先观察整个代码，可以不难发现从<code>10007184</code>到<code>100071A9</code>连续4个判断逻辑，很明显，这四个判断逻辑正是在依次对照第5、4、3、2组注册码是否与前面计算出来的数据是否一致，所以不难猜想，在<code>10007184</code>前面的代码基本就是注册码生成的逻辑了，这个库根据注册码的第一位和前面传入的小料进行了各自复杂的运算，得出了注册码后四位来进行逐个对比，如果不对就提示错误。但是我在跟进汇编时发现一个异常现象，每次程序都从<code>10007166 JE SHORT sss.10007184</code>直接快进到了检查注册表的逻辑，但可以发现<code>10007166</code>地址的指令下面还有一段汇编代码，直到<code>RETN</code>返回，一直没有被执行。此时已经初露端倪了，这个库似乎想要回传什么数据。我们对这两个跳转打断点后更改标志位使两个跳转不动作，接下来到达<code>10007175 LEA ESI,DWORD PTR SS:[ESP+C]</code>这一行，在此处dump一下<code>[ESP+C]</code>，看看发现了什么！<br>
+<img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260316214532.webp" alt="Pasted_image_20260316214532.webp"><br>
+读一下此处红色的内存部分:<code>1234 2EBE 63E7 BCE9 CE6D 11D2 F62F 50AE 15F8 2063</code>如果你还记得的话，没错，其中<code>11D2 F62F 50AE 15F8 2063</code>就是程序在调用该库前传递的小料，那么前面的几位字符，不难看出，就是我们期待的以1234为第一组的正确注册码！没错，作者把注册机的逻辑也写在了这个库内，虽然添加了两个判断防止进入注册机逻辑。这样一来就好说了，也不需要修改dll库的汇编代码让它强制吐出注册码了。这样我们只需编写代码调用这个库里的注册机逻辑的程序即可<br>
+这里直接使用AI写了一个简单的Python脚本供参考</p>
+<blockquote>
+<p>注意，由于该程序是32位程序，所以也需要使用对应的32位python环境运行，这里极力推荐使用uv python库管理器，输入命令<code>uv venv --python 3.12-x86</code>即可在当前文件夹下安装32位python虚拟环境，不会污染你电脑上的python环境，接着输入<code>uv run register.py</code>即可使用虚拟环境运行该程序，而无需麻烦的挂载虚拟环境脚本</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ctypes</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;========== 启动终极 Python 注册机 ===========&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line"></span><br><span class="line">    user_input = <span class="built_in">input</span>(<span class="string">&quot;\n请输入自定义种子 (4位十六进制，例如 1234, ABCD): &quot;</span>).strip()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 允许直接回车使用默认值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> user_input:</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[*] 检测到空输入，将使用默认种子: 1234&quot;</span>)</span><br><span class="line"></span><br><span class="line">        seed = <span class="number">0x1234</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将用户输入的字符串作为十六进制 (base 16) 转换为整数</span></span><br><span class="line"></span><br><span class="line">        seed = <span class="built_in">int</span>(user_input, <span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 确保输入的值在两字节无符号整数 (0 - 0xFFFF) 范围内，否则 pack_into 会报错</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="number">0</span> &lt;= seed &lt;= <span class="number">0xFFFF</span>:</span><br><span class="line"></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[!] 错误: 种子数值超出范围，请输入 0000 到 FFFF 之间的值。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[!] 错误: 无效的十六进制输入（请勿包含 G-Z 等非十六进制字符）。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># --------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line"></span><br><span class="line">    dll = ctypes.windll.LoadLibrary(<span class="string">&quot;./Patched.dll&quot;</span>)</span><br><span class="line"></span><br><span class="line">    func_address = dll._handle + <span class="number">0x7090</span></span><br><span class="line"></span><br><span class="line">    PROTOTYPE = ctypes.WINFUNCTYPE(<span class="literal">None</span>, ctypes.c_char_p, ctypes.c_int)</span><br><span class="line"></span><br><span class="line">    generate_key = PROTOTYPE(func_address)</span><br><span class="line"></span><br><span class="line">    buffer = ctypes.create_string_buffer(<span class="number">256</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ------------------ 1. 注入用户输入的种子 ------------------</span></span><br><span class="line"></span><br><span class="line">    struct.pack_into(<span class="string">&quot;&lt;H&quot;</span>, buffer, <span class="number">0x00</span>, seed)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ------------------ 2. 注入上帝开关 ------------------</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 覆盖原本的 11D2，触发 DLL 的内置注册机逻辑</span></span><br><span class="line"></span><br><span class="line">    struct.pack_into(<span class="string">&quot;&lt;H&quot;</span>, buffer, <span class="number">0x0A</span>, <span class="number">0x0572</span>)</span><br><span class="line">  </span><br><span class="line">    <span class="comment"># ------------------ 3. 注入核心加密盐值 ------------------</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对应汇编: MOV DWORD PTR [ESP+30], 50AEF62F (存放在偏移 0x0C)</span></span><br><span class="line"></span><br><span class="line">    struct.pack_into(<span class="string">&quot;&lt;I&quot;</span>, buffer, <span class="number">0x0C</span>, <span class="number">0x50AEF62F</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对应汇编: MOV WORD PTR [ESP+34], 15F8 (存放在偏移 0x10)</span></span><br><span class="line"></span><br><span class="line">    struct.pack_into(<span class="string">&quot;&lt;H&quot;</span>, buffer, <span class="number">0x10</span>, <span class="number">0x15F8</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对应汇编: MOV WORD PTR [ESP+36], 2063 (存放在偏移 0x12)</span></span><br><span class="line"></span><br><span class="line">    struct.pack_into(<span class="string">&quot;&lt;H&quot;</span>, buffer, <span class="number">0x12</span>, <span class="number">0x2063</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n[*] 已注入自定义种子: <span class="subst">&#123;seed:04X&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[*] 已注入全套加密盐值矩阵 (50AEF62F, 15F8, 2063)...&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;[*] 正在呼叫 DLL 核心引擎...\n&quot;</span>)</span><br><span class="line">  </span><br><span class="line">    <span class="comment"># 执行调用，传入参数 1 防止被前面的分支跳过</span></span><br><span class="line"></span><br><span class="line">    generate_key(buffer, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从偏移 0x02 开始，连续读取计算出的 4 组真码</span></span><br><span class="line"></span><br><span class="line">    parts = struct.unpack_from(<span class="string">&quot;&lt;HHHH&quot;</span>, buffer, <span class="number">0x02</span>)</span><br><span class="line">  </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;========== 🎉 完美破解成功！ 🎉 ==========&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;你的专属合法注册码:&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;seed:04X&#125;</span>-<span class="subst">&#123;parts[<span class="number">0</span>]:04X&#125;</span>-<span class="subst">&#123;parts[<span class="number">1</span>]:04X&#125;</span>-<span class="subst">&#123;parts[<span class="number">2</span>]:04X&#125;</span>-<span class="subst">&#123;parts[<span class="number">3</span>]:04X&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;==========================================&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n[!] 发生错误: <span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/img/%E6%9F%90%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E5%AE%9E%E6%88%98/Pasted_image_20260317194621.webp" alt="Pasted_image_20260317194621.webp"></p>
+<h2 id="后记"><a class="header-anchor" href="#后记">#</a>后记</h2>
+<p>至此，本程序的逆向过程暂时告一段落，由于时间问题，没能将注册码生成逻辑重写回高级语言有些遗憾，但是这次逆向过程还是学到了很多知识和技巧，在动态调试中寻找突破口打断点是一个很重要的环节，一旦找到这个突破口，成功定位到关键代码，一切问题就迎刃而解了。希望这篇文章能够对您有所帮助，感谢您的阅读。<strong>本篇文章仅作为学习交流使用！！！！</strong><br>
+<em>评论区请友善交流，无关话题将会被删除</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yingluonou.github.io">YangLuoNou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.yangluonou.space/posts/2462f8e1.html">https://www.yangluonou.space/posts/2462f8e1.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.yangluonou.space" target="_blank">YangLuoNou's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91/">软件逆向</a><a class="post-meta__tags" href="/tags/%E9%80%86%E5%90%91/">逆向</a><a class="post-meta__tags" href="/tags/%E7%A0%B4%E8%A7%A3/">破解</a><a class="post-meta__tags" href="/tags/%E6%B1%87%E7%BC%96/">汇编</a></div><div class="post-share"><div class="social-share" data-image="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/posts/d5a1eb4b.html" title="彻底删除某网盘的智能看图软件及各种流氓捆绑组件通用方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">彻底删除某网盘的智能看图软件及各种流氓捆绑组件通用方法</div></div><div class="info-2"><div class="info-item-1">前言废话 这篇文章其实挺早之前就想写了，但是一直各种事推脱到现在（（（ 某天我在编辑网站图片时，突然从右键菜单中的打开方式看到了一个名字和图标(高仿Windows自带的“照片”)都看起来非常像流氓软件的打开方式“智能看图” 由于我自认为平时电脑使用习惯基本不会安装上流氓软件，竟然突然跳脸一个无论怎么看都是流氓软件的打开方式，我还挺惊讶的，一开始还想，这流氓软件都进化到不用点击下载就直接装到电脑上了吗。于是果断捏着鼻子）），先使用这个软件打开了图片，然后打开任务管理器查看进程，结果不看不知道，一看吓一跳，进程名称叫“BaiduNetdiskImageViewer.exe”，竟然罪魁祸首是百度网盘…虽然这个网盘软件流氓行为已经见怪不怪了，但是作为平常我一直只在下载网盘文件时使用的软件这次跳脸流氓倒是让我十分气愤，于是立马打开程序所在目录，其目录指向（某网盘安装地址）BaiduNetdisk\module\ImageViewer，目录下也没有卸载程序，竟然是作为某网盘模块安装的，而且我毫不知情。于是立马动手手动卸载了这个程序，并清理的注册表。顺便将某国产文字软件携带的看图程序一块干掉了...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://avatars.githubusercontent.com/u/87926896?s=96&amp;v=4" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">YangLuoNou</div><div class="author-info-description">YangLuoNou的个人博客，随处学学，随便写写。</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YingLuoNou"><i class="fab fa-github"></i><span>Github</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">仍在建设中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%AD%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">断点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%B7%9F%E8%B8%AA"><span class="toc-number">3.</span> <span class="toc-text">程序跟踪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%88%86%E7%A0%B4"><span class="toc-number">4.</span> <span class="toc-text">程序爆破</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E6%9C%BA%E7%BC%96%E5%86%99"><span class="toc-number">5.</span> <span class="toc-text">注册机编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">6.</span> <span class="toc-text">后记</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/2462f8e1.html" title="从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战">从 NOP 爆破到写出注册机：记一次对某软件注册机制的逆向实战</a><time datetime="2026-03-17T12:10:00.000Z" title="发表于 2026-03-17 20:10:00">2026-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d5a1eb4b.html" title="彻底删除某网盘的智能看图软件及各种流氓捆绑组件通用方法">彻底删除某网盘的智能看图软件及各种流氓捆绑组件通用方法</a><time datetime="2026-02-02T11:00:00.000Z" title="发表于 2026-02-02 19:00:00">2026-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/35417.html" title="Bitcoin：一种代码即法律的共识交易货币">Bitcoin：一种代码即法律的共识交易货币</a><time datetime="2025-12-12T14:50:01.000Z" title="发表于 2025-12-12 22:50:01">2025-12-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/2092.html" title="配置属于自己的免费随机图库api">配置属于自己的免费随机图库api</a><time datetime="2025-11-29T14:00:00.000Z" title="发表于 2025-11-29 22:00:00">2025-11-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/16107.html" title="Hello World">Hello World</a><time datetime="2025-11-28T11:05:17.146Z" title="发表于 2025-11-28 19:05:17">2025-11-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://random-img-api.yangluonou.space/footer);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By YangLuoNou</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.2</a></span></div><div class="footer_custom_text"><a href="/link/">友情链接</a> <br> Also by YingLuoNou!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.4/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = [{"createIssueManually":true}]
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liZZVKLKnfCNv1ai',
+      clientSecret: '44090ae3c5218d9194dcf8015875e4d5c701a560',
+      repo: 'gitalk_from_blog',
+      owner: 'YingLuoNou',
+      admin: ['YingLuoNou'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || 'eef9e022f66e218c04ce751e90b7ca43'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="/js/gitalk-mode-switcher.js"></script><script src="/tools/pomodoro/pomodoro.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
